@@ -21,16 +21,17 @@ class Deposit extends React.Component {
   }
   
   componentWillMount () {
-    Keyboard.addListener('keyboardDidShow', () => this.setState({keyboard:true}))
-    Keyboard.addListener('keyboardDidHide', () => this.setState({keyboard:false}))
+    this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => this.setState({keyboard:true}))
+    this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => this.setState({keyboard:false}))
   }
 
   componentWillUnmount () {
-    Keyboard.removeAllListeners()
+    this.keyboardDidShowListener.remove()
+    this.keyboardDidHideListener.remove()
   }
 
   _makeDeposit(){
-
+    this.props.navigation.navigate('Dashboard')
   }
 
   render() {
@@ -57,7 +58,7 @@ class Deposit extends React.Component {
           placeholder={'USD 30,000.00'} 
           underlineColorAndroid='rgba(0, 0, 0, 0)'/>
 
-        <Button block rounded bordered light style={styles.button}>
+        <Button block rounded bordered light style={styles.button} onPress={this._makeDeposit.bind(this)}>
           <Text>Make my first deposit</Text>
         </Button>
       </LinearGradient>
