@@ -11,8 +11,10 @@ import { Text, Button } from 'native-base'
 import LinearGradient from 'react-native-linear-gradient'
 import { connect } from 'react-redux'
 
+import colors from '../styles/base'
 import { formsStyles } from '../styles/forms'
 import { setValue } from './DepositActions'
+import { addCoin } from '../dashboard/DashboardActions'
 
 class Deposit extends React.Component {
   constructor(props) {
@@ -31,14 +33,15 @@ class Deposit extends React.Component {
   }
 
   _makeDeposit(){
+    this.props.addCoin({id: 'USD', amount: this.props.value})
     this.props.navigation.navigate('Dashboard')
   }
 
   render() {
     return (
-      <LinearGradient colors={['#5691c8', '#267871']} 
+      <LinearGradient colors={colors.gradient} 
         style={styles.mainContent}>
-        <StatusBar backgroundColor="#5691c8"/>
+        <StatusBar backgroundColor={colors.primary}/>
         {!this.state.keyboard?
           <View style={styles.hiddenContent}>
             <Image source={ require('../../images/saving.png')} style={styles.image}/>
@@ -53,7 +56,7 @@ class Deposit extends React.Component {
           onChangeText={(text) => this.props.setValue(text)}
           width={'100%'}
           style={formsStyles.inputBackgrounded}
-          value={this.state.value}
+          value={this.props.value.toString()}
           keyboardType='numeric'
           placeholder={'USD 30,000.00'} 
           underlineColorAndroid='rgba(0, 0, 0, 0)'/>
@@ -72,7 +75,10 @@ const mapStateToProps = state => (
   }
 )
 
-export default connect(mapStateToProps, {setValue})(Deposit)
+export default connect(mapStateToProps, {
+  setValue,
+  addCoin
+})(Deposit)
 
 const styles = StyleSheet.create({
   image: {

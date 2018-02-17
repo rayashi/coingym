@@ -5,18 +5,41 @@ import {
   Image,
   StatusBar,
   Keyboard,
-  TextInput,
+  FlatList,  
 } from 'react-native'
-import { Text, Button } from 'native-base'
+import { 
+  Text, 
+  Button,
+  ListItem,
+  Body 
+} from 'native-base'
 import LinearGradient from 'react-native-linear-gradient'
 import { connect } from 'react-redux'
 
+import colors from '../styles/base'
+import CustomHeader from '../shared/CustomHeader'
 
 class Dashboard extends React.Component {
+  _keyExtractor = (item, index) => item.id;
+  
+  _renderItem = ({item}) => (
+    <ListItem>
+      <Body>
+        <Text >{item.id}{item.amount}</Text>
+      </Body>
+    </ListItem>
+  )
 
   render() {
     return (
       <View>
+        <StatusBar backgroundColor={colors.primary}/>
+        <CustomHeader title='Coingym'/>
+        <FlatList
+          data={this.props.mycoins}
+          keyExtractor={this._keyExtractor}
+          renderItem={this._renderItem}/>     
+    
         <Text style={styles.title}>Everyone starts from scratch</Text>
         <Text style={styles.text}>Now that you have some money, it’s time to buy crypto currencies. We will be your first exchange for learn, a place where you can buy and sell coins. </Text>
         <Text style={styles.text}>Touch here to start.</Text>
@@ -28,7 +51,7 @@ class Dashboard extends React.Component {
 
 const mapStateToProps = state => (
   {
-    value: state.DepositReducer.value,
+    mycoins: state.DashboardReducer.mycoins,
   }
 )
 
@@ -54,7 +77,7 @@ const styles = StyleSheet.create({
   title: {
     paddingHorizontal: 18,
     fontSize: 22,
-    color: '#31978C',
+    color: colors.primary,
     backgroundColor: 'transparent',
     textAlign: 'center',
     marginVertical: 16,

@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 import {
   StyleSheet,
   Text,
@@ -6,10 +6,10 @@ import {
   Image,
   StatusBar,
 } from 'react-native'
-import LinearGradient from 'react-native-linear-gradient';
+import LinearGradient from 'react-native-linear-gradient'
 
-import AppIntroSlider from 'react-native-app-intro-slider';
-
+import AppIntroSlider from 'react-native-app-intro-slider'
+import colors from '../styles/base'
 
 const styles = StyleSheet.create({
   image: {
@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
     height: 180,
   },
   text: {
-    color: 'rgba(255, 255, 255, 0.8)',
+    color: colors.textOnBG,
     backgroundColor: 'transparent',
     textAlign: 'center',
     paddingHorizontal: 20,
@@ -66,7 +66,7 @@ export default class Intro extends React.Component {
   }
   
   _renderItem = props => (
-    <LinearGradient colors={['#5691c8', '#267871']} 
+    <LinearGradient colors={colors.gradient} 
       style={[styles.mainContent, {
         paddingTop: props.topSpacer,
         paddingBottom: props.bottomSpacer,
@@ -74,7 +74,7 @@ export default class Intro extends React.Component {
         height: props.height,
       }]}>
       
-      <StatusBar backgroundColor="#5691c8"/>
+      <StatusBar backgroundColor={colors.statusbar}/>
       <Image source={props.image} style={styles.image}/>
       <Text style={styles.title}>{props.title}</Text>
       <Text style={styles.text}>{props.text}</Text>

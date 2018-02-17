@@ -1,5 +1,5 @@
 const INITIAL_STATE = {
-  value: 0,
+  value: 10000,
 }
 
 export default (state = INITIAL_STATE, action) => {
