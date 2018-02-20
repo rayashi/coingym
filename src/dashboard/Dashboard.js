@@ -5,45 +5,67 @@ import {
   Image,
   StatusBar,
   Keyboard,
-  FlatList,  
+  FlatList,
 } from 'react-native'
 import { 
   Text, 
   Button,
   ListItem,
-  Body 
+  Left,
+  Right,
+  Body,
+  Fab,
+  Icon
 } from 'native-base'
 import LinearGradient from 'react-native-linear-gradient'
 import { connect } from 'react-redux'
 
 import colors from '../styles/base'
 import CustomHeader from '../shared/CustomHeader'
+import FabButton from '../shared/FabButton'
 
 class Dashboard extends React.Component {
-  _keyExtractor = (item, index) => item.id;
+  _keyExtractor = (item, index) => item.coin.id
   
   _renderItem = ({item}) => (
-    <ListItem>
+    <ListItem avatar>
+      <Left>
+        <Image source={{ uri: item.coin.icon }}  style={{width: 32, height: 32}}/>
+      </Left>
       <Body>
-        <Text >{item.id}{item.amount}</Text>
+        <Text >{item.coin.id}</Text>
+        <Text note>{item.coin.name}</Text>
       </Body>
+      <Right>
+        <Text >{item.amount}</Text>
+      </Right>
     </ListItem>
   )
 
+  _onBuy() {
+    
+  }
+
   render() {
     return (
-      <View>
+      <View style={{flex:1}}>
         <StatusBar backgroundColor={colors.primary}/>
         <CustomHeader title='Coingym'/>
         <FlatList
           data={this.props.mycoins}
           keyExtractor={this._keyExtractor}
           renderItem={this._renderItem}/>     
-    
-        <Text style={styles.title}>Everyone starts from scratch</Text>
-        <Text style={styles.text}>Now that you have some money, it’s time to buy crypto currencies. We will be your first exchange for learn, a place where you can buy and sell coins. </Text>
-        <Text style={styles.text}>Touch here to start.</Text>
-        <Image source={require('../../images/arrow.png')} resizeMode='contain' style={styles.arrow}/>
+
+        {this.props.mycoins.length <= 1?
+          <View>
+            <Text style={styles.title}>Everyone starts from scratch</Text>
+            <Text style={styles.text}>Now that you have some money, it’s time to buy crypto currencies. We will be your first exchange for learn, a place where you can buy and sell coins. </Text>
+            <Text style={styles.text}>Touch here to start.</Text>
+            <Image source={require('../../images/arrow.png')} resizeMode='contain' style={styles.arrow}/>
+          </View>
+        :null}
+        
+        <FabButton icon='md-add' onPress={this._onBuy}/>
       </View>
     )
   }
@@ -99,11 +121,11 @@ const styles = StyleSheet.create({
     marginTop: 40
   },
   arrow: {
-    width: 80,
+    width: 40,
     height: 130,
-    alignSelf: 'center'
-
-
+    alignSelf: 'center',
+    marginBottom: 20,
+    marginLeft: 30
   }
 
 })

@@ -33,7 +33,11 @@ class Deposit extends React.Component {
   }
 
   _makeDeposit(){
-    this.props.addCoin({id: 'USD', amount: this.props.value})
+    let coin = {
+      coin: {id: 'USD', name: 'Dollar', icon: 'https://cdn2.iconfinder.com/data/icons/flat-icons-19/512/Coin.png'}, 
+      amount: this.props.value
+    }
+    this.props.addCoin(coin)
     this.props.navigation.navigate('Dashboard')
   }
 

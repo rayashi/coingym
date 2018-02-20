@@ -74,7 +74,7 @@ export default class Intro extends React.Component {
         height: props.height,
       }]}>
       
-      <StatusBar backgroundColor={colors.statusbar}/>
+      <StatusBar backgroundColor={colors.primary}/>
       <Image source={props.image} style={styles.image}/>
       <Text style={styles.title}>{props.title}</Text>
       <Text style={styles.text}>{props.text}</Text>
