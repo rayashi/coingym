@@ -15,7 +15,7 @@ export default class FabButton extends Component {
 
   render() {
     return (
-      <TouchableOpacity style={styles.container}>
+      <TouchableOpacity style={styles.container} onPress={this.props.onPress}>
         <Icon name={this.props.icon} style={{color:'white'}}/>
       </TouchableOpacity>
     )

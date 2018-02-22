@@ -43,7 +43,7 @@ class Dashboard extends React.Component {
   )
 
   _onBuy() {
-    
+    this.props.navigation.navigate('CoinList')
   }
 
   render() {
@@ -65,7 +65,7 @@ class Dashboard extends React.Component {
           </View>
         :null}
         
-        <FabButton icon='md-add' onPress={this._onBuy}/>
+        <FabButton icon='md-add' onPress={this._onBuy.bind(this)}/>
       </View>
     )
   }
