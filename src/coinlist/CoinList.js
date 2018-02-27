@@ -6,6 +6,7 @@ import {
   StatusBar,
   Keyboard,
   FlatList,
+  TouchableOpacity
 } from 'react-native'
 import { 
   Text, 
@@ -26,25 +27,35 @@ import { getCoinsPrice } from './CoinListActions'
 
 class CoinList extends React.Component {
   componentWillMount () {
-    this.props.getCoinsPrice()
+    let { paywith } = this.props.navigation.state.params
+    this.props.getCoinsPrice(paywith)
+  }
+
+  _onSelectPair(pair){
+    this.props.navigation.navigate('Order', {pair})
   }
 
   _keyExtractor = (item, index) => item.id.toString()
   
   _renderItem = ({item}) => (
-    <ListItem avatar>
-      <Left>
-        <Image source={{ uri: item.image  }}  
-              style={{width: 32, height: 32}}/>
-      </Left>
-      <Body>
-        <Text >{item.symbol}</Text>
-        <Text note>{item.name}</Text>
-      </Body>
-      <Right>
-        <Text >{item.price_usd}</Text>
-      </Right>
-    </ListItem>
+    <TouchableOpacity onPress={this._onSelectPair.bind(this, item)}>
+      <View style={styles.pairsContent}>
+        <View style={styles.pairContent}>
+          <Image source={{ uri: item.buy.image  }} style={{width: 32, height: 32}}/>
+          <Text>{item.buy.name}</Text>
+          <Text>1 {item.buy.symbol}</Text>
+        </View>
+        <View style={styles.pairCenter}>
+          <Text>{item.id}</Text>
+          <Text>=</Text>
+        </View>
+        <View style={styles.pairContent}>
+          <Image source={require('../../images/coins/USD.png')} style={{width: 32, height: 32}}/>
+          <Text>{item.paywith.name}</Text>
+          <Text>{item.price} {item.paywith.symbol}</Text>
+        </View>
+      </View>
+    </TouchableOpacity >
   )
 
   _onBuy() {
@@ -55,9 +66,9 @@ class CoinList extends React.Component {
     return (
       <View style={{flex:1}}>
         <StatusBar backgroundColor={colors.primary}/>
-        <CustomHeader title='Buy'/>
+        <CustomHeader title='Buy                              Pay With'/>
         <FlatList
-          data={this.props.coinsInfo}
+          data={this.props.pairs}
           keyExtractor={this._keyExtractor}
           renderItem={this._renderItem}/>
       </View>
@@ -68,6 +79,7 @@ class CoinList extends React.Component {
 const mapStateToProps = state => (
   {
     coinsInfo: state.CoinListReducer.coinsInfo,
+    pairs: state.CoinListReducer.pairs,
   }
 )
 
@@ -101,6 +113,20 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  pairsContent: {
+    flex: 1,
+    flexDirection: 'row',
+    borderBottomColor: 'gray'
+  },
+  pairContent: {
+    flex: 1,
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  pairCenter: {
+    flex: 1,
+    alignItems: 'center',
   }
 
 })

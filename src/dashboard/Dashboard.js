@@ -43,7 +43,8 @@ class Dashboard extends React.Component {
   )
 
   _onBuy() {
-    this.props.navigation.navigate('CoinList')
+    let paywith = { symbol: 'USD', name: 'Dollar', image: '../../images/coins/USD.png' }
+    this.props.navigation.navigate('CoinList', { paywith })
   }
 
   render() {
