@@ -25,16 +25,16 @@ import CustomHeader from '../shared/CustomHeader'
 import FabButton from '../shared/FabButton'
 
 class Dashboard extends React.Component {
-  _keyExtractor = (item, index) => item.coin.id
+  _keyExtractor = (item, index) => item.symbol
   
   _renderItem = ({item}) => (
     <ListItem avatar>
       <Left>
-        <Image source={{ uri: item.coin.icon }}  style={{width: 32, height: 32}}/>
+        <Image source={{ uri: item.image }}  style={{width: 32, height: 32}}/>
       </Left>
       <Body>
-        <Text >{item.coin.id}</Text>
-        <Text note>{item.coin.name}</Text>
+        <Text >{item.symbol}</Text>
+        <Text note>{item.name}</Text>
       </Body>
       <Right>
         <Text >{item.amount}</Text>

@@ -117,7 +117,8 @@ const styles = StyleSheet.create({
   pairsContent: {
     flex: 1,
     flexDirection: 'row',
-    borderBottomColor: 'gray'
+    borderBottomColor: 'gray',
+    marginVertical: 12
   },
   pairContent: {
     flex: 1,

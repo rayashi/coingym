@@ -29,20 +29,67 @@ import CustomHeader from '../shared/CustomHeader'
 
 
 class Order extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.state = { 
+      balance: null,
+      pair: null
+    }
+  }
+
   componentWillMount () {
-    
+    let { pair } = this.props.navigation.state.params
+    let { mycoins } = this.props
+    let balance = mycoins.find(function (obj) { return obj.symbol === pair.paywith.symbol })
+    pair.paywith.value = 0
+    this.setState({
+      balance: balance,
+      pair: pair,
+    })
   }
 
   _onBuy() {
     
   }
 
-  _onSlide(value) {
-    console.log(value)
+  _onChangePayWith(value){
+    let { pair } = this.state
+    this.setState({
+      pair: {
+        ...pair,
+        paywith : {
+          ...pair.paywith,
+          amount: value
+        },
+        buy : {
+          ...pair.buy,
+          amount: value / pair.price
+        }
+      }
+    })
+  }
+  _onChangeBuy(value){
+    let { pair } = this.state
+    this.setState({
+      pair: {
+        ...pair,
+        paywith : {
+          ...pair.paywith,
+          amount: pair.price * value
+        },
+        buy : {
+          ...this.state.pair.buy,
+          amount: value
+        }
+      }
+    })
   }
 
+
   render() {
-    let { pair } = this.props.navigation.state.params
+    let { pair, balance } = this.state
+    if(!pair || !balance) return null
 
     return (
       <View style={{flex:1}}>
@@ -50,34 +97,37 @@ class Order extends React.Component {
         <CustomHeader title='Order'/>
         <Container style={{padding:8}}>
           <Content>
-            <Card style={{padding:8}}>
+            <Card style={styles.card}>
               <CardItem>
                 <Body>
                   <Text style={styles.ask}>How much {pair.paywith.name}s do you want yo spend?</Text>
-                  <Slider value={1} width='100%'
-                    maximumValue={10}
-                    onSlidingComplete={value => this._onSlide.bind(this, value)}
+                  <Slider width='100%'
+                    value={pair.paywith.amount}
+                    maximumValue={this.state.balance.amount}
+                    onValueChange={val => this._onChangePayWith.bind(this)(val)}
                     step={1}/>
-                  <Text style={{marginTop: 14}}> {pair.paywith.symbol}</Text>          
+                  <Text style={{marginTop: 14}}> {pair.paywith.amount} {pair.paywith.symbol}</Text>
                 </Body>
               </CardItem>
             </Card>
-            <Card style={{padding:8}}>
+            <Card style={styles.card}>
               <CardItem>
                 <Body>
                   <Text style={styles.ask}>How much {pair.buy.name}s do you want to buy?</Text>
-                  <Slider value={1} width='100%'
-                    maximumValue={10}
-                    onSlidingComplete={value => this._onSlide.bind(this, value)}
-                    step={1}/>
-                  <Text style={{marginTop: 14}}> {pair.buy.symbol}</Text>          
+                  <Slider width='100%'
+                    value={pair.buy.amount}
+                    maximumValue={(balance.amount/pair.price)}
+                    onValueChange={val => this._onChangeBuy.bind(this)(val)}
+                    step={0.00000001}/>
+                  <Text style={{marginTop: 14}}>{pair.buy.amount} {pair.buy.symbol}</Text>
                 </Body>
               </CardItem>
             </Card>
+            <Button block rounded style={styles.button}>
+              <Text>Place my order</Text>
+            </Button>
           </Content>
         </Container>
-        
-
       </View>
     )
   }
@@ -85,7 +135,7 @@ class Order extends React.Component {
 
 const mapStateToProps = state => (
   {
-
+    mycoins: state.DashboardReducer.mycoins,
   }
 )
 
@@ -120,8 +170,14 @@ const styles = StyleSheet.create({
   },
   ask: {
     alignSelf:'center', 
-    fontSize: 16, 
+    fontSize: 18, 
     fontWeight: 'bold', 
-    marginBottom: 14
+    marginBottom: 20
+  },
+  card: {
+    padding: 6
+  },
+  button: {
+    marginTop: 12
   }
 })
