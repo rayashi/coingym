@@ -17,6 +17,8 @@ import { setValue } from './DepositActions'
 import { addCoin } from '../dashboard/DashboardActions'
 
 class Deposit extends React.Component {
+  static navigationOptions = { header: null }
+  
   constructor(props) {
     super(props)
     this.state = {keyboard:false}

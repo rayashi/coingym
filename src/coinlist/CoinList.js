@@ -26,6 +26,8 @@ import CustomHeader from '../shared/CustomHeader'
 import { getCoinsPrice } from './CoinListActions'
 
 class CoinList extends React.Component {
+  static navigationOptions = { header: null }
+  
   componentWillMount () {
     let { paywith } = this.props.navigation.state.params
     this.props.getCoinsPrice(paywith)

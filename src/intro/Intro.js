@@ -61,6 +61,8 @@ const slides = [
 ]
 
 export default class Intro extends React.Component {
+  static navigationOptions = { header: null }
+  
   _onDone = () => {
     this.props.navigation.navigate('Deposit')
   }

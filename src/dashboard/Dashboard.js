@@ -25,6 +25,8 @@ import CustomHeader from '../shared/CustomHeader'
 import FabButton from '../shared/FabButton'
 
 class Dashboard extends React.Component {
+  static navigationOptions = { header: null }
+  
   _keyExtractor = (item, index) => item.symbol
   
   _renderItem = ({item}) => (
