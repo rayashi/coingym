@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "334929619387",
+    "firebase_url": "https://coingym.firebaseio.com",
+    "project_id": "coingym",
+    "storage_bucket": "coingym.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:334929619387:android:779f869b9c47523d",
+        "android_client_info": {
+          "package_name": "com.coingym"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "334929619387-g9r89kkia0ko3m1lljklsl09e4s3v73m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCSSof30qjqgXnmMI55vVTGVU0hAlEt8Sc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

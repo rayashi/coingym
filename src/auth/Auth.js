@@ -19,6 +19,7 @@ import {
   FooterTab,
   Right
 } from 'native-base'
+import { Toast } from 'native-base'
 import { connect } from 'react-redux'
 
 import LinearGradient from 'react-native-linear-gradient'
@@ -41,7 +42,7 @@ class Auth extends Component {
     let { username_valid, password_valid } = this.props 
     if(!username_valid){
       Toast.show({
-        text: 'Informe um email válido por favor', 
+        text: 'Please, give me a valid email', 
         type: 'danger',
         position: 'top',
         duration: 2500
@@ -49,7 +50,7 @@ class Auth extends Component {
       return false
     }else if(!password_valid){
       Toast.show({
-        text: 'Password is to short', 
+        text: 'This password is to short', 
         type: 'danger',
         position: 'top',
         duration: 2500
@@ -115,8 +116,8 @@ class Auth extends Component {
                   placeholder={'Senha'} 
                   underlineColorAndroid='rgba(0, 0, 0, 0)'/>
                 
-                <View style={styles.buttons}>
-                  <Button block light style={formsStyles.button}>
+                <View style={styles.buttons} >
+                  <Button block light style={formsStyles.button} onPress={this._onLogin.bind(this)}>
                     <Text>Login</Text>
                   </Button>
                   <Button block bordered light style={formsStyles.button}>

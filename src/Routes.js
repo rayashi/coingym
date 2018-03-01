@@ -9,12 +9,13 @@ import Order from './order/Order'
 import Auth from './auth/Auth'
 
 const drawerRoutes = {
+  Auth: { screen: Auth },
   Intro: { screen: Intro },
   Deposit: { screen: Deposit },
   Dashboard: { screen: Dashboard },
   CoinList: { screen: CoinList },
   Order: { screen: Order},
-  Auth: { screen: Auth },
+  
   
 }
 
