@@ -26,11 +26,15 @@ import LinearGradient from 'react-native-linear-gradient'
 
 import colors from '../styles/base'
 import { formsStyles } from '../styles/forms'
-import { setUsername, setPassword, login } from './AuthActions'
+import { setUsername, setPassword, login, loginWithFacebook } from './AuthActions'
 
 
 class Auth extends Component {
   static navigationOptions = { header: null }
+
+  _onLoginWithFacebook(){
+    this.props.loginWithFacebook(this.props.navigation, 'Dashboard')
+  }
 
   _onLogin(){
     if(this.props.loading) return null
@@ -120,7 +124,8 @@ class Auth extends Component {
                   <Button block light style={formsStyles.button} onPress={this._onLogin.bind(this)}>
                     <Text>Login</Text>
                   </Button>
-                  <Button block bordered light style={formsStyles.button}>
+                  <Button block bordered light style={formsStyles.button} 
+                    onPress={this._onLoginWithFacebook.bind(this)}>
                     <Icon name='logo-facebook' size={32}/>
                     <Text>Sign in using Facebook</Text>
                   </Button>
@@ -158,7 +163,8 @@ const mapStateToProps = state => (
 export default connect(mapStateToProps, { 
   setUsername, 
   setPassword,
-  login
+  login,
+  loginWithFacebook
 }
 )(Auth)
 

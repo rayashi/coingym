@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { Toast } from 'native-base'
 import firebase from 'react-native-firebase'
+import { AccessToken, LoginManager } from 'react-native-fbsdk'
 
 export const setPassword = (value) => {
   return {
@@ -39,5 +40,25 @@ export const login = (username, password, nav, goTo) => {
       })
     }
     dispatch({type: 'loading_auth', payload: false}) 
+  }
+}
+
+export const loginWithFacebook = (nav, goTo) => {
+  return dispatch => {
+    dispatch({type: 'loading_auth', payload: true})  
+    LoginManager.logInWithReadPermissions(['public_profile', 'email'])
+      .then( result => {
+        if (!result.isCancelled) {
+          AccessToken.getCurrentAccessToken()
+            .then(data => {
+              console.log(apiLoginWithFacebook(data.accessToken.toString()))
+            })
+        }else {
+          dispatch({type: 'loading_auth', payload: false})  
+        }
+      }, error => { 
+        dispatch({type: 'loading_auth', payload: false})  
+        alert('Login failed with error: ' + error)
+      })
   }
 }
