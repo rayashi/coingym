@@ -30,7 +30,7 @@ export const login = (username, password, nav, goTo) => {
     dispatch({type: 'loading_auth', payload: true}) 
     try{
       const user = await firebase.auth().signInAndRetrieveDataWithEmailAndPassword(username, password)
-      console.log(user)
+      nav.navigate(goTo)
     }catch (err){
       Toast.show({
         text: 'This password is not correct', 
@@ -44,21 +44,24 @@ export const login = (username, password, nav, goTo) => {
 }
 
 export const loginWithFacebook = (nav, goTo) => {
-  return dispatch => {
+  return async dispatch => {
     dispatch({type: 'loading_auth', payload: true})  
-    LoginManager.logInWithReadPermissions(['public_profile', 'email'])
-      .then( result => {
-        if (!result.isCancelled) {
-          AccessToken.getCurrentAccessToken()
-            .then(data => {
-              console.log(apiLoginWithFacebook(data.accessToken.toString()))
-            })
-        }else {
-          dispatch({type: 'loading_auth', payload: false})  
-        }
-      }, error => { 
-        dispatch({type: 'loading_auth', payload: false})  
-        alert('Login failed with error: ' + error)
-      })
+    try{
+      const result = await LoginManager.logInWithReadPermissions(['public_profile', 'email'])
+      if (result.isCancelled) {
+        throw new Error('User cancelled request')
+      }
+      const data = await AccessToken.getCurrentAccessToken()
+      if (!data) {
+        throw new Error('Something went wrong obtaining the users access token')
+      }
+      const credential = firebase.auth.FacebookAuthProvider.credential(data.accessToken)
+      const currentUser = await firebase.auth().signInAndRetrieveDataWithCredential(credential)
+      nav.navigate(goTo)
+
+    } catch(err) {
+      alert('Login failed with error: ' + error)
+    }
+    dispatch({type: 'loading_auth', payload: false})  
   }
 }

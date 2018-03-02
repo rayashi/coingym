@@ -10,12 +10,6 @@ const INITIAL_STATE = {
   username_valid: true,
   name_valid: false,
   password_valid: true,
-  pin: '',
-  pin_valid: false,
-  pin_created: false,
-  loading_pin: false,
-  validating_pin: false,
-  changing_password: false
 }
 
 export default (state = INITIAL_STATE, action) => {
