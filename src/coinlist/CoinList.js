@@ -52,7 +52,7 @@ class CoinList extends React.Component {
           <Text>=</Text>
         </View>
         <View style={styles.pairContent}>
-          <Image source={require('../../images/coins/USD.png')} style={{width: 32, height: 32}}/>
+          <Image source={{ uri: item.paywith.image  }} style={{width: 32, height: 32}}/>
           <Text>{item.paywith.name}</Text>
           <Text>{item.price} {item.paywith.symbol}</Text>
         </View>
@@ -68,7 +68,7 @@ class CoinList extends React.Component {
     return (
       <View style={{flex:1}}>
         <StatusBar backgroundColor={colors.primary}/>
-        <CustomHeader title='Buy                              Pay With'/>
+        <CustomHeader title='Buy / Pay With'/>
         <FlatList
           data={this.props.pairs}
           keyExtractor={this._keyExtractor}

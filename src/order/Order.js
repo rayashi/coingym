@@ -43,10 +43,12 @@ class Order extends React.Component {
     let { pair } = this.props.navigation.state.params
     let { mycoins } = this.props
     let balance = mycoins.find(function (obj) { return obj.symbol === pair.paywith.symbol })
-    pair.paywith.value = 0
+    pair.paywith.amount = 0
+    pair.paywith.available = balance.amount
+    pair.buy.amount = 0
+    pair.buy.maximumValue = pair.paywith.available/pair.price
     this.setState({
-      balance: balance,
-      pair: pair,
+      pair: pair
     })
   }
 
@@ -89,8 +91,8 @@ class Order extends React.Component {
 
 
   render() {
-    let { pair, balance } = this.state
-    if(!pair || !balance) return null
+    let { pair } = this.state
+    if(!pair) return null
 
     return (
       <View style={{flex:1}}>
@@ -100,27 +102,51 @@ class Order extends React.Component {
           <Content>
             <Card style={styles.card}>
               <CardItem>
-                <Body>
+                <Body style={styles.cardBody}>
+                  <Image source={{ uri: pair.paywith.image  }} style={styles.coinImage}/>      
                   <Text style={styles.ask}>How much {pair.paywith.name}s do you want yo spend?</Text>
                   <Slider width='100%'
                     value={pair.paywith.amount}
-                    maximumValue={this.state.balance.amount}
-                    onValueChange={val => this._onChangePayWith.bind(this)(val)}
-                    step={1}/>
-                  <Text style={{marginTop: 14}}> {pair.paywith.amount} {pair.paywith.symbol}</Text>
+                    maximumValue={this.state.pair.paywith.available}
+                    onValueChange={val => {
+                      this._onChangePayWith.bind(this)(val)
+                    }}
+                    step={0.01}/>
+
+                  <View style={styles.amountLine}>
+                    <View>
+
+                    </View>
+                    <View>
+                      <Text> {pair.paywith.amount} {pair.paywith.symbol}</Text>    
+                    </View>                    
+                  </View>
+
                 </Body>
               </CardItem>
             </Card>
             <Card style={styles.card}>
               <CardItem>
-                <Body>
+                <Body style={styles.cardBody}>
+                  <Image source={{ uri: pair.buy.image  }} style={styles.coinImage}/>      
                   <Text style={styles.ask}>How much {pair.buy.name}s do you want to buy?</Text>
                   <Slider width='100%'
                     value={pair.buy.amount}
-                    maximumValue={(balance.amount/pair.price)}
-                    onValueChange={val => this._onChangeBuy.bind(this)(val)}
+                    maximumValue={pair.buy.maximumValue}
+                    onValueChange={val => {
+                      this._onChangeBuy.bind(this)(val)
+                    }}
                     step={0.00000001}/>
-                  <Text style={{marginTop: 14}}>{pair.buy.amount} {pair.buy.symbol}</Text>
+                  
+                  <View style={styles.amountLine}>
+                    <View>
+
+                    </View>
+                    <View>
+                      <Text> {pair.buy.amount} {pair.buy.symbol}</Text>
+                    </View>                    
+                  </View>
+
                 </Body>
               </CardItem>
             </Card>
@@ -180,5 +206,18 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 12
+  },
+  amountLine: {
+    flex: 1,
+    flexDirection: 'row',
+    marginTop: 14
+  },
+  cardBody: {
+    alignItems: 'center'
+  },
+  coinImage: {
+    width: 35, 
+    height: 35,
+    marginBottom: 10
   }
 })

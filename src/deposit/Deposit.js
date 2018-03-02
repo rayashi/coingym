@@ -38,7 +38,7 @@ class Deposit extends React.Component {
     let coin = {
       symbol: 'USD', 
       name: 'Dollar', 
-      image: 'https://cdn2.iconfinder.com/data/icons/flat-icons-19/512/Coin.png', 
+      image: 'https://firebasestorage.googleapis.com/v0/b/coingym.appspot.com/o/USD.png?alt=media&token=e732110f-bfa6-4366-b1bd-3e4341597f76', 
       amount: this.props.value
     }
     this.props.addCoin(coin)
