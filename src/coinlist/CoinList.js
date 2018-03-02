@@ -40,20 +40,38 @@ class CoinList extends React.Component {
   _keyExtractor = (item, index) => item.id.toString()
   
   _renderItem = ({item}) => (
-    <TouchableOpacity onPress={this._onSelectPair.bind(this, item)}>
-      <View style={styles.pairsContent}>
+    <TouchableOpacity onPress={this._onSelectPair.bind(this, item)} style={styles.item}>
+      <View style={styles.lineContent}>
         <View style={styles.pairContent}>
-          <Image source={{ uri: item.buy.image  }} style={{width: 32, height: 32}}/>
-          <Text>{item.buy.name}</Text>
+          <Image source={{ uri: item.buy.image  }} style={{width: 30, height: 30}}/>
+        </View>
+        <View style={styles.pairCenter}>
+        </View>
+        <View style={styles.pairContent}>
+          <Image source={{ uri: item.paywith.image  }} style={{width: 30, height: 30}}/>
+        </View>
+      </View>
+
+      <View style={styles.lineContent}>
+        <View style={styles.pairContent}>
+          <Text style={styles.coinName}>{item.buy.name}</Text>
+        </View>
+        <View style={styles.pairCenter}>
+          <Text style={{fontWeight:'bold'}}>{item.id}</Text>
+        </View>
+        <View style={styles.pairContent}>
+          <Text style={styles.coinName}>{item.paywith.name}</Text>
+        </View>
+      </View>
+
+      <View style={styles.lineContent}>
+        <View style={styles.pairContent}>
           <Text>1 {item.buy.symbol}</Text>
         </View>
         <View style={styles.pairCenter}>
-          <Text>{item.id}</Text>
           <Text>=</Text>
         </View>
         <View style={styles.pairContent}>
-          <Image source={{ uri: item.paywith.image  }} style={{width: 32, height: 32}}/>
-          <Text>{item.paywith.name}</Text>
           <Text>{item.price} {item.paywith.symbol}</Text>
         </View>
       </View>
@@ -116,20 +134,29 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  pairsContent: {
+  item: {
+    padding: 10,
+    borderBottomColor: 'rgba(0,0,0,0.2)',
+    borderBottomWidth: 0.2,
+    marginHorizontal: 12
+  },
+  lineContent: {
     flex: 1,
     flexDirection: 'row',
-    borderBottomColor: 'gray',
-    marginVertical: 12
   },
   pairContent: {
     flex: 1,
     flexDirection: 'column',
     alignItems: 'center',
+    justifyContent: 'center'
   },
   pairCenter: {
     flex: 1,
     alignItems: 'center',
+  },
+  coinName: {
+    alignSelf: 'center',
+    fontSize: 12
   }
 
 })
