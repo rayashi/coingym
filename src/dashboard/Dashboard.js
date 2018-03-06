@@ -19,6 +19,7 @@ import {
 } from 'native-base'
 import LinearGradient from 'react-native-linear-gradient'
 import { connect } from 'react-redux'
+import firebase from 'react-native-firebase'
 
 import colors from '../styles/base'
 import CustomHeader from '../shared/CustomHeader'
@@ -27,7 +28,32 @@ import FabButton from '../shared/FabButton'
 class Dashboard extends React.Component {
   static navigationOptions = { header: null }
   
-  _keyExtractor = (item, index) => item.symbol
+  constructor(props) {
+    super(props)
+    var user = firebase.auth().currentUser
+    this.ref = firebase.firestore().collection('orders').where('user', "==", user.uid)
+    this.unsubscribe = null
+    this.state = {
+      orders: [],
+    }
+  }
+
+  componentDidMount() {
+    this.unsubscribe = this.ref.onSnapshot(this._onCollectionUpdate) 
+  }
+  
+  _onCollectionUpdate = (querySnapshot) => {
+    const orders = []
+    querySnapshot.forEach(order => {
+      orders.push({
+        id: order.id,
+        ...order.data()
+      })
+    })
+    this.setState({ orders })
+  }
+
+  _keyExtractor = (item, index) => item.id
   
   _renderItem = ({item}) => (
     <ListItem avatar>
@@ -43,6 +69,20 @@ class Dashboard extends React.Component {
       </Right>
     </ListItem>
   )
+  
+  _renderOrder = ({item}) => (
+    <ListItem >
+      <Left>
+        <Text >{item.pair}</Text>
+      </Left>
+
+      <Body>
+        <Text >{item.amount}</Text>
+        <Text >{item.price}</Text>
+      </Body>
+    </ListItem>
+  )
+
 
   _onBuy() {
     let paywith = { symbol: 'USD', name: 'Dollar', image: 'https://firebasestorage.googleapis.com/v0/b/coingym.appspot.com/o/USD.png?alt=media&token=e732110f-bfa6-4366-b1bd-3e4341597f76' }
@@ -55,11 +95,11 @@ class Dashboard extends React.Component {
         <StatusBar backgroundColor={colors.primary}/>
         <CustomHeader title='Coingym'/>
         <FlatList
-          data={this.props.mycoins}
+          data={this.state.orders}
           keyExtractor={this._keyExtractor}
-          renderItem={this._renderItem}/>     
+          renderItem={this._renderOrder}/>     
 
-        {this.props.mycoins.length <= 1?
+        {this.state.orders.length <= 1?
           <View>
             <Text style={styles.title}>Everyone starts from scratch</Text>
             <Text style={styles.text}>Now that you have some money, it’s time to buy crypto currencies. We will be your first exchange for learn, a place where you can buy and sell coins. </Text>

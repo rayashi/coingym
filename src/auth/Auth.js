@@ -21,7 +21,7 @@ import {
 } from 'native-base'
 import { Toast } from 'native-base'
 import { connect } from 'react-redux'
-
+import firebase from 'react-native-firebase'
 import LinearGradient from 'react-native-linear-gradient'
 
 import colors from '../styles/base'
@@ -32,8 +32,13 @@ import { setUsername, setPassword, login, loginWithFacebook } from './AuthAction
 class Auth extends Component {
   static navigationOptions = { header: null }
 
+  componentDidMount() {
+    console.log(firebase.auth().currentUser)
+
+  }
+  
   _onLoginWithFacebook(){
-    this.props.loginWithFacebook(this.props.navigation, 'Dashboard')
+    this.props.loginWithFacebook(this.props.navigation, 'Deposit')
   }
 
   _onLogin(){

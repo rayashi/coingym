@@ -26,6 +26,7 @@ import { connect } from 'react-redux'
 
 import colors from '../styles/base'
 import CustomHeader from '../shared/CustomHeader'
+import { placeOrder } from './OrderActions'
 
 
 class Order extends React.Component {
@@ -52,8 +53,8 @@ class Order extends React.Component {
     })
   }
 
-  _onBuy() {
-    
+  _onPlaceOrder() {
+    this.props.placeOrder(this.state.pair, this.props.navigation, 'Dashboard')
   }
 
   _onChangePayWith(value){
@@ -150,7 +151,7 @@ class Order extends React.Component {
                 </Body>
               </CardItem>
             </Card>
-            <Button block rounded style={styles.button}>
+            <Button block rounded style={styles.button} onPress={this._onPlaceOrder.bind(this)}>
               <Text>Place my order</Text>
             </Button>
           </Content>
@@ -166,7 +167,9 @@ const mapStateToProps = state => (
   }
 )
 
-export default connect(mapStateToProps, {})(Order)
+export default connect(mapStateToProps, {
+  placeOrder
+})(Order)
 
 const styles = StyleSheet.create({
   text: {
@@ -205,7 +208,8 @@ const styles = StyleSheet.create({
     padding: 6
   },
   button: {
-    marginTop: 12
+    marginTop: 12,
+    backgroundColor: colors.primary
   },
   amountLine: {
     flex: 1,
