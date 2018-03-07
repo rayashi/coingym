@@ -2,6 +2,7 @@ import axios from 'axios'
 import { Toast } from 'native-base'
 import firebase from 'react-native-firebase'
 import { AccessToken, LoginManager } from 'react-native-fbsdk'
+import { GoogleSignin } from 'react-native-google-signin'
 
 export const setPassword = (value) => {
   return {
@@ -59,9 +60,29 @@ export const loginWithFacebook = (nav, goTo) => {
       const currentUser = await firebase.auth().signInAndRetrieveDataWithCredential(credential)
       nav.navigate(goTo)
 
-    } catch(err) {
-      alert('Login failed with error: ' + error)
+    } catch(error) {
+      console.log('Login using facebook failed with error: ' + error)
     }
     dispatch({type: 'loading_auth', payload: false})  
   }
+}
+
+export const loginWithGoogle = (nav, goTo) => {
+  return async dispatch => {
+    dispatch({type: 'loading_auth', payload: true})  
+    try {
+      // Add any configuration settings here:
+      await GoogleSignin.configure()
+      const data = await GoogleSignin.signIn()
+      const credential = firebase.auth.GoogleAuthProvider.credential(data.idToken, data.accessToken)
+      const currentUser = await firebase.auth().signInAndRetrieveDataWithCredential(credential)
+      console.info(JSON.stringify(currentUser.toJSON()))
+      nav.navigate(goTo)
+      
+    } catch (error) {
+      console.log('Login using google failed with error: ' + error)
+    }
+    dispatch({type: 'loading_auth', payload: false})  
+  }
+
 }

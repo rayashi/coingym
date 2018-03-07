@@ -137,6 +137,10 @@ android {
 }
 
 dependencies {
+    compile(project(":react-native-google-signin")){         
+        exclude group: "com.google.android.gms"
+    }
+    compile 'com.google.android.gms:play-services-auth:11.8.0'
     compile project(':react-native-fbsdk')
     compile(project(':react-native-firebase')) {
         transitive = false

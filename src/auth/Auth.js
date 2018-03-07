@@ -26,7 +26,13 @@ import LinearGradient from 'react-native-linear-gradient'
 
 import colors from '../styles/base'
 import { formsStyles } from '../styles/forms'
-import { setUsername, setPassword, login, loginWithFacebook } from './AuthActions'
+import { 
+  setUsername, 
+  setPassword, 
+  login, 
+  loginWithFacebook,
+  loginWithGoogle 
+} from './AuthActions'
 
 
 class Auth extends Component {
@@ -38,7 +44,11 @@ class Auth extends Component {
   }
   
   _onLoginWithFacebook(){
-    this.props.loginWithFacebook(this.props.navigation, 'Deposit')
+    this.props.loginWithFacebook(this.props.navigation, 'Dashboard')
+  }
+  
+  _onLoginWithGoogle(){
+    this.props.loginWithGoogle(this.props.navigation, 'Dashboard')
   }
 
   _onLogin(){
@@ -89,7 +99,7 @@ class Auth extends Component {
             height: Dimensions.get('window').height,
           }]}>
 
-          <Content contentContainerStyle={{flex:1}}>
+          <Content contentContainerStyle={{flex:1, width: Dimensions.get('window').width}}>
             <View style={styles.container}>
               <TouchableOpacity style={styles.close} 
                 onPress={this._onCancel.bind(this)}>
@@ -100,39 +110,16 @@ class Auth extends Component {
                 <Text style={{color: 'white', fontSize: 30}}> Coingym </Text>
               </View>
               <View style={styles.form}>
-                <TextInput
-                  width={Dimensions.get('window').width - 36}
-                  style={formsStyles.inputBackgrounded} 
-                  ref='email' autoCapitalize='none'
-                  keyboardType='email-address'
-                  value={this.props.username}
-                  onChangeText={(text) => this.props.setUsername(text)}
-                  placeholder={'Email'} 
-                  underlineColorAndroid='rgba(0, 0, 0, 0)'
-                  onSubmitEditing={(event) => { 
-                    this.refs.password.focus(); 
-                  }}
-                  onBlur={(event) => { 
-                    this.refs.password.focus(); 
-                  }}/>
-                <TextInput
-                  style={formsStyles.inputBackgrounded} 
-                  ref='password'
-                  secureTextEntry
-                  value={this.props.password}
-                  onChangeText={(text) => this.props.setPassword(text)}
-                  onSubmitEditing={this._onLogin.bind(this)}
-                  placeholder={'Senha'} 
-                  underlineColorAndroid='rgba(0, 0, 0, 0)'/>
-                
                 <View style={styles.buttons} >
-                  <Button block light style={formsStyles.button} onPress={this._onLogin.bind(this)}>
-                    <Text>Login</Text>
-                  </Button>
                   <Button block bordered light style={formsStyles.button} 
                     onPress={this._onLoginWithFacebook.bind(this)}>
-                    <Icon name='logo-facebook' size={32}/>
+                    <Icon style={{left:10}} name='logo-facebook' size={32}/>
                     <Text>Sign in using Facebook</Text>
+                  </Button>
+                  <Button block bordered light style={formsStyles.button} 
+                    onPress={this._onLoginWithGoogle.bind(this)}>
+                    <Icon style={{left:4}} name='logo-google' size={32}/>
+                    <Text>Sign in using Google</Text>
                   </Button>
                 </View>
               </View>
@@ -169,7 +156,8 @@ export default connect(mapStateToProps, {
   setUsername, 
   setPassword,
   login,
-  loginWithFacebook
+  loginWithFacebook,
+  loginWithGoogle
 }
 )(Auth)
 
@@ -186,7 +174,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     flexDirection: 'column',
     justifyContent: 'center',
-    marginBottom: 10
+    marginBottom: 10    
   },
   action: {
     marginVertical: 12,
