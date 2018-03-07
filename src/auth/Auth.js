@@ -38,7 +38,7 @@ class Auth extends Component {
   }
   
   _onLoginWithFacebook(){
-    this.props.loginWithFacebook(this.props.navigation, 'Deposit')
+    this.props.loginWithFacebook(this.props.navigation, 'Dashboard')
   }
 
   _onLogin(){
