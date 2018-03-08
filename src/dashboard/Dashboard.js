@@ -7,8 +7,8 @@ import {
   Keyboard,
   FlatList,
 } from 'react-native'
-import { 
-  Text, 
+import {
+  Text,
   Button,
   ListItem,
   Left,
@@ -28,7 +28,7 @@ import { setFunds } from './DashboardActions'
 
 class Dashboard extends React.Component {
   static navigationOptions = { header: null }
-  
+
   constructor(props) {
     super(props)
     var user = firebase.auth().currentUser
@@ -37,7 +37,7 @@ class Dashboard extends React.Component {
   }
 
   componentDidMount() {
-    this.unsubscribe = this.ref.onSnapshot(this._onCollectionUpdate) 
+    this.unsubscribe = this.ref.onSnapshot(this._onCollectionUpdate)
   }
 
   _onCollectionUpdate = (querySnapshot) => {
@@ -45,7 +45,7 @@ class Dashboard extends React.Component {
   }
 
   _keyExtractor = (item, index) => item.id
-  
+
   _renderItem = ({item}) => (
     <ListItem avatar>
       <Left>
@@ -59,10 +59,10 @@ class Dashboard extends React.Component {
         <Right>
           <View style={{flexDirection:'row'}}>
             <View style={{marginRight:6}} >
-              {item.ticker.percent_change_24h>0? 
-                <Icon name='md-arrow-dropup' size={20} style={{color:colors.positive}}/> 
-              : 
-                <Icon name='md-arrow-dropdown' size={20} style={{color:colors.negative}}/> 
+              {item.ticker.percent_change_24h>0?
+                <Icon name='md-arrow-dropup' size={20} style={{color:colors.positive}}/>
+              :
+                <Icon name='md-arrow-dropdown' size={20} style={{color:colors.negative}}/>
               }
             </View>
             <View >
@@ -93,7 +93,7 @@ class Dashboard extends React.Component {
         <FlatList
           data={this.props.funds}
           keyExtractor={this._keyExtractor}
-          renderItem={this._renderItem}/>     
+          renderItem={this._renderItem}/>
 
         {this.props.funds.length <= 1?
           <View>
@@ -103,7 +103,7 @@ class Dashboard extends React.Component {
             <Image source={require('../../images/arrow.png')} resizeMode='contain' style={styles.arrow}/>
           </View>
         :null}
-        
+
         <FabButton icon='md-add' onPress={this._onBuy.bind(this)}/>
       </View>
     )
