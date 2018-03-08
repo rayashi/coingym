@@ -4,7 +4,6 @@ import {
   View,
   Image,
   StatusBar,
-  Keyboard,
   FlatList,
 } from 'react-native'
 import {
@@ -14,34 +13,27 @@ import {
   Left,
   Right,
   Body,
-  Fab,
   Icon
 } from 'native-base'
 import LinearGradient from 'react-native-linear-gradient'
 import { connect } from 'react-redux'
-import firebase from 'react-native-firebase'
 
 import colors from '../styles/base'
 import CustomHeader from '../shared/CustomHeader'
 import FabButton from '../shared/FabButton'
-import { setFunds } from './DashboardActions'
+import { subscribeFundsChange } from './DashboardActions'
 
 class Dashboard extends React.Component {
   static navigationOptions = { header: null }
 
-  constructor(props) {
-    super(props)
-    var user = firebase.auth().currentUser
-    this.ref = firebase.firestore().collection('users').doc(`${user.uid}`).collection('funds').orderBy('fiat')
-    this.unsubscribe = null
-  }
-
   componentDidMount() {
-    this.unsubscribe = this.ref.onSnapshot(this._onCollectionUpdate)
+    this.props.subscribeFundsChange()
   }
 
-  _onCollectionUpdate = (querySnapshot) => {
-    this.props.setFunds(querySnapshot)
+  componentWillUnmount() {
+    if(this.props.unsubscribeFundsChange){
+      this.props.unsubscribeFundsChange()
+    }
   }
 
   _keyExtractor = (item, index) => item.id
@@ -98,9 +90,14 @@ class Dashboard extends React.Component {
         {this.props.funds.length <= 1?
           <View>
             <Text style={styles.title}>Everyone starts from scratch</Text>
-            <Text style={styles.text}>Now that you have some money, it’s time to buy crypto currencies. We will be your first exchange for learn, a place where you can buy and sell coins. </Text>
+            <Text style={styles.text}>
+              Now that you have some money, it’s time to buy
+              crypto currencies. We will be your first exchange
+              for learn, a place where you can buy and sell coins.
+            </Text>
             <Text style={styles.text}>Touch here to start.</Text>
-            <Image source={require('../../images/arrow.png')} resizeMode='contain' style={styles.arrow}/>
+            <Image source={require('../../images/arrow.png')}
+              resizeMode='contain' style={styles.arrow}/>
           </View>
         :null}
 
@@ -113,11 +110,12 @@ class Dashboard extends React.Component {
 const mapStateToProps = state => (
   {
     funds: state.DashboardReducer.funds,
+    unsubscribeFundsChange: state.DashboardReducer.unsubscribeFundsChange
   }
 )
 
 export default connect(mapStateToProps, {
-  setFunds
+  subscribeFundsChange
 })(Dashboard)
 
 const styles = StyleSheet.create({

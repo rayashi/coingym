@@ -2,6 +2,7 @@ import axios from 'axios'
 import { Toast } from 'native-base'
 import firebase from 'react-native-firebase'
 import { AccessToken, LoginManager } from 'react-native-fbsdk'
+import { GoogleSignin } from 'react-native-google-signin'
 
 export const setPassword = (value) => {
   return {
@@ -57,11 +58,50 @@ export const loginWithFacebook = (nav, goTo) => {
       }
       const credential = firebase.auth.FacebookAuthProvider.credential(data.accessToken)
       const currentUser = await firebase.auth().signInAndRetrieveDataWithCredential(credential)
+      saveUser(dispatch, currentUser)
       nav.navigate(goTo)
-
-    } catch(err) {
-      alert('Login failed with error: ' + error)
+    } catch(error) {
+      Toast.show({
+        text: error.toString(), 
+        type: 'danger',
+        position: 'top',
+        duration: 3000
+      })
+      console.log('Login using facebook failed with error: ' + error)
     }
     dispatch({type: 'loading_auth', payload: false})  
   }
+}
+
+export const loginWithGoogle = (nav, goTo) => {
+  return async dispatch => {
+    dispatch({type: 'loading_auth', payload: true})  
+    try {
+      await GoogleSignin.configure() 
+      const data = await GoogleSignin.signIn()
+      const credential = firebase.auth.GoogleAuthProvider.credential(data.idToken, data.accessToken)
+      const currentUser = await firebase.auth().signInAndRetrieveDataWithCredential(credential) 
+      saveUser(dispatch, currentUser)
+      nav.navigate(goTo)
+    } catch (error) {
+      Toast.show({
+        text: error.toString(), 
+        type: 'danger',
+        position: 'top',
+        duration: 3000
+      })
+      console.log('Login using google failed with error: ' + error)
+    }
+    dispatch({type: 'loading_auth', payload: false})  
+  }
+}
+
+const saveUser = (dispatch, currentUser) => {
+  dispatch({type: 'set_current_user', payload: currentUser})
+  let userRef = firebase.firestore().collection('users').doc(`${currentUser.user.uid}`)
+  userRef.set({
+    displayName: currentUser.user.displayName,
+    email: currentUser.user.email,
+    photoURL: currentUser.user.photoURL,
+  })
 }
