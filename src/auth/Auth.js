@@ -15,8 +15,6 @@ import {
   Button, 
   Icon,
   Container,
-  Footer,
-  FooterTab,
   Right
 } from 'native-base'
 import { Toast } from 'native-base'
@@ -38,11 +36,6 @@ import {
 class Auth extends Component {
   static navigationOptions = { header: null }
 
-  componentDidMount() {
-    console.log(firebase.auth().currentUser)
-
-  }
-  
   _onLoginWithFacebook(){
     if(this.props.loading) return null
     this.props.loginWithFacebook(this.props.navigation, 'Dashboard')
