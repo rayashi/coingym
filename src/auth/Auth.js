@@ -46,10 +46,6 @@ class Auth extends Component {
   _onLoginWithFacebook(){
     this.props.loginWithFacebook(this.props.navigation, 'Dashboard')
   }
-  
-  _onLoginWithGoogle(){
-    this.props.loginWithGoogle(this.props.navigation, 'Dashboard')
-  }
 
   _onLogin(){
     if(this.props.loading) return null

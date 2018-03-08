@@ -24,6 +24,7 @@ import firebase from 'react-native-firebase'
 import colors from '../styles/base'
 import CustomHeader from '../shared/CustomHeader'
 import FabButton from '../shared/FabButton'
+import { setFunds } from './DashboardActions'
 
 class Dashboard extends React.Component {
   static navigationOptions = { header: null }
@@ -31,26 +32,16 @@ class Dashboard extends React.Component {
   constructor(props) {
     super(props)
     var user = firebase.auth().currentUser
-    this.ref = firebase.firestore().collection('orders').where('user', "==", user.uid)
+    this.ref = firebase.firestore().collection('users').doc(`${user.uid}`).collection('funds').orderBy('fiat')
     this.unsubscribe = null
-    this.state = {
-      orders: [],
-    }
   }
 
   componentDidMount() {
     this.unsubscribe = this.ref.onSnapshot(this._onCollectionUpdate) 
   }
-  
+
   _onCollectionUpdate = (querySnapshot) => {
-    const orders = []
-    querySnapshot.forEach(order => {
-      orders.push({
-        id: order.id,
-        ...order.data()
-      })
-    })
-    this.setState({ orders })
+    this.props.setFunds(querySnapshot)
   }
 
   _keyExtractor = (item, index) => item.id
@@ -61,25 +52,30 @@ class Dashboard extends React.Component {
         <Image source={{ uri: item.image }}  style={{width: 32, height: 32}}/>
       </Left>
       <Body>
-        <Text >{item.symbol}</Text>
-        <Text note>{item.name}</Text>
+        <Text >{item.name}</Text>
+        <Text style={{fontWeight:'bold'}} >{item.amount.toFixed(item.precision)}</Text>
       </Body>
-      <Right>
-        <Text >{item.amount}</Text>
-      </Right>
-    </ListItem>
-  )
-  
-  _renderOrder = ({item}) => (
-    <ListItem >
-      <Left>
-        <Text >{item.pair}</Text>
-      </Left>
-
-      <Body>
-        <Text >{item.amount}</Text>
-        <Text >{item.price}</Text>
-      </Body>
+      {item.ticker?
+        <Right>
+          <View style={{flexDirection:'row'}}>
+            <View style={{marginRight:6}} >
+              {item.ticker.percent_change_24h>0? 
+                <Icon name='md-arrow-dropup' size={20} style={{color:colors.positive}}/> 
+              : 
+                <Icon name='md-arrow-dropdown' size={20} style={{color:colors.negative}}/> 
+              }
+            </View>
+            <View >
+              <Text style={item.ticker.percent_change_24h>0? styles.positive : styles.negative}>
+                {item.ticker.percent_change_24h}%
+              </Text>
+            </View>
+          </View>
+          <Text style={item.ticker.percent_change_24h>0? styles.positive : styles.negative}>
+            {item.ticker.price_usd} USD
+          </Text>
+        </Right>
+      :null}
     </ListItem>
   )
 
@@ -93,13 +89,13 @@ class Dashboard extends React.Component {
     return (
       <View style={{flex:1}}>
         <StatusBar backgroundColor={colors.primary}/>
-        <CustomHeader title='Coingym'/>
+        <CustomHeader title='Funds'/>
         <FlatList
-          data={this.state.orders}
+          data={this.props.funds}
           keyExtractor={this._keyExtractor}
-          renderItem={this._renderOrder}/>     
+          renderItem={this._renderItem}/>     
 
-        {this.state.orders.length <= 1?
+        {this.props.funds.length <= 1?
           <View>
             <Text style={styles.title}>Everyone starts from scratch</Text>
             <Text style={styles.text}>Now that you have some money, it’s time to buy crypto currencies. We will be your first exchange for learn, a place where you can buy and sell coins. </Text>
@@ -116,11 +112,13 @@ class Dashboard extends React.Component {
 
 const mapStateToProps = state => (
   {
-    mycoins: state.DashboardReducer.mycoins,
+    funds: state.DashboardReducer.funds,
   }
 )
 
-export default connect(mapStateToProps, {})(Dashboard)
+export default connect(mapStateToProps, {
+  setFunds
+})(Dashboard)
 
 const styles = StyleSheet.create({
   image: {
@@ -169,6 +167,12 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginBottom: 20,
     marginLeft: 30
+  },
+  negative: {
+    color: colors.negative
+  },
+  positive: {
+    color: colors.positive
   }
 
 })

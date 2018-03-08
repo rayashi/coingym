@@ -1,5 +1,5 @@
 const INITIAL_STATE = {
-  token: null,
+  user: { uid: 'mwGAZUiUstbtRzjPKt6eNmuCoA53' },
   name: '',
   username: 'rayashi@gmail.com',
   password: '123456',
