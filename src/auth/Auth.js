@@ -44,7 +44,13 @@ class Auth extends Component {
   }
   
   _onLoginWithFacebook(){
+    if(this.props.loading) return null
     this.props.loginWithFacebook(this.props.navigation, 'Dashboard')
+  }
+  
+  _onLoginWithGoogle(){
+    if(this.props.loading) return null
+    this.props.loginWithGoogle(this.props.navigation, 'Dashboard')
   }
 
   _onLogin(){
@@ -80,7 +86,7 @@ class Auth extends Component {
   }
 
   _onCancel() {
-    this.props.navigation.navigate('Store')
+    this.props.navigation.navigate('Dashboard')
   }
 
   render() {
@@ -121,14 +127,6 @@ class Auth extends Component {
               </View>
             </View>
           </Content>
-          <Footer >
-            <FooterTab style={{backgroundColor:colors.gradient[1]}}>
-              <Button onPress={this._onRegister.bind(this)}>
-                <Text style={{color: 'white'}}>New here?</Text>
-                <Text style={{fontWeight: 'bold', color: 'white'}}>Sign up</Text>
-              </Button>
-            </FooterTab>
-          </Footer>
         </LinearGradient>
       </Container>
       

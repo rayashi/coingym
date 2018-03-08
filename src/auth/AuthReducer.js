@@ -1,15 +1,12 @@
 const INITIAL_STATE = {
-  user: { uid: 'mwGAZUiUstbtRzjPKt6eNmuCoA53' },
   name: '',
   username: 'rayashi@gmail.com',
   password: '123456',
-  error_login: false,
-  userData: {},
-  authenticated: false,
   loading: false,
   username_valid: true,
   name_valid: false,
   password_valid: true,
+  currentUser: null
 }
 
 export default (state = INITIAL_STATE, action) => {
@@ -33,44 +30,8 @@ export default (state = INITIAL_STATE, action) => {
       name: action.payload.name,
       name_valid: action.payload.valid
     }
-  }else if(action.type == 'success_login'){
-    return {...state, token: action.payload ,error_login: false}
-  }else if(action.type == 'error_login'){
-    return {...state, error_login: true, loading: false}
-  }else if(action.type == 'success_user_authenticated'){
-    return {
-      ...state, 
-      userData: {...action.payload, token: state.token}, 
-      error_login: false, 
-      loading: false,
-      authenticated: true
-    }
-  }else if(action.type == 'logout'){
-    return {
-      token: null,
-      name: '',
-      username: '',
-      password: '',
-      error_login: false,
-      userData: {},
-      authenticated: false,
-      loading: false,
-    }
-  }else if(action.type == 'loading_pin'){
-    return {...state, loading_pin: action.payload}  
-  }else if(action.type == 'pin_valid'){
-    return {...state, pin_valid: action.payload}  
-  }else if(action.type == 'pin_created'){
-    return {...state, pin_created: action.payload}  
-  }else if(action.type == 'set_pin'){
-    return {...state, pin: action.payload}  
-  }else if(action.type == 'validating_pin'){
-    return {...state, validating_pin: action.payload}  
-  }else if(action.type == 'changing_password'){
-    return {...state, changing_password: action.payload}  
-  }else if(action.type == 'set_userdata_cliente'){
-    return {...state, userData: {...state.userData, cliente: action.payload}}  
+  }else if(action.type == 'set_currentUser'){
+    return { ...state, currentUser: action.payload }
   }
-
   return state
 }
