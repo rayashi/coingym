@@ -20,18 +20,18 @@ import firebase from 'react-native-firebase'
 import LinearGradient from 'react-native-linear-gradient'
 
 import colors from '../styles/base'
-import { listeningAuthState } from './LoadingActions'
+import { subscribeAuthChange } from './LoadingActions'
 
 class Loading extends Component {
   static navigationOptions = { header: null }
 
   componentDidMount() {
-    this.props.listeningAuthState(this.props.navigation)  
+    this.props.subscribeAuthChange(this.props.navigation)  
   }
 
   componentWillUnmount() {
-    if(this.props.authSubscription){
-      this.props.authSubscription()
+    if(this.props.unsubscribeAuthChange){
+      this.props.unsubscribeAuthChange()
     }
   }
 
@@ -55,12 +55,12 @@ class Loading extends Component {
 
 const mapStateToProps = state => (
   {
-    authSubscription: state.LoadingReducer.authSubscription
+    unsubscribeAuthChange: state.LoadingReducer.unsubscribeAuthChange
   }
 )
 
 export default connect(mapStateToProps, { 
-  listeningAuthState
+  subscribeAuthChange
 }
 )(Loading)
 

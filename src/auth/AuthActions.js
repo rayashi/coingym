@@ -58,7 +58,7 @@ export const loginWithFacebook = (nav, goTo) => {
       }
       const credential = firebase.auth.FacebookAuthProvider.credential(data.accessToken)
       const currentUser = await firebase.auth().signInAndRetrieveDataWithCredential(credential)
-      saveUser(currentUser)
+      saveUser(dispatch, currentUser)
       nav.navigate(goTo)
     } catch(error) {
       Toast.show({
@@ -80,9 +80,8 @@ export const loginWithGoogle = (nav, goTo) => {
       await GoogleSignin.configure() 
       const data = await GoogleSignin.signIn()
       const credential = firebase.auth.GoogleAuthProvider.credential(data.idToken, data.accessToken)
-      const currentUser = await firebase.auth().signInAndRetrieveDataWithCredential(credential)
-      dispatch({type: 'set_currentUser', payload: currentUser}) 
-      saveUser(currentUser)
+      const currentUser = await firebase.auth().signInAndRetrieveDataWithCredential(credential) 
+      saveUser(dispatch, currentUser)
       nav.navigate(goTo)
     } catch (error) {
       Toast.show({
@@ -97,7 +96,8 @@ export const loginWithGoogle = (nav, goTo) => {
   }
 }
 
-const saveUser = (currentUser) => {
+const saveUser = (dispatch, currentUser) => {
+  dispatch({type: 'set_current_user', payload: currentUser})
   let userRef = firebase.firestore().collection('users').doc(`${currentUser.user.uid}`)
   userRef.set({
     displayName: currentUser.user.displayName,
