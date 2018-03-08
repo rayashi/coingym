@@ -1,5 +1,5 @@
 const INITIAL_STATE = {
-  mycoins: [],
+  fundsSubscription: null,
   funds: []
 }
 
