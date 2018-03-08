@@ -21,18 +21,18 @@ import { connect } from 'react-redux'
 import colors from '../styles/base'
 import CustomHeader from '../shared/CustomHeader'
 import FabButton from '../shared/FabButton'
-import { listeningFundsChanges } from './DashboardActions'
+import { subscribeFundsChange } from './DashboardActions'
 
 class Dashboard extends React.Component {
   static navigationOptions = { header: null }
 
   componentDidMount() {
-    this.props.listeningFundsChanges()
+    this.props.subscribeFundsChange()
   }
 
   componentWillUnmount() {
-    if(this.props.fundsSubscription){
-      this.props.fundsSubscription()
+    if(this.props.unsubscribeFundsChange){
+      this.props.unsubscribeFundsChange()
     }
   }
 
@@ -110,12 +110,12 @@ class Dashboard extends React.Component {
 const mapStateToProps = state => (
   {
     funds: state.DashboardReducer.funds,
-    fundsSubscription: state.DashboardReducer.fundsSubscription
+    unsubscribeFundsChange: state.DashboardReducer.unsubscribeFundsChange
   }
 )
 
 export default connect(mapStateToProps, {
-  listeningFundsChanges
+  subscribeFundsChange
 })(Dashboard)
 
 const styles = StyleSheet.create({

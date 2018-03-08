@@ -1,12 +1,12 @@
 import axios from 'axios'
 import firebase from 'react-native-firebase'
 
-export const listeningFundsChanges = () => {
+export const subscribeFundsChange = () => {
   return dispatch => {
     let user = firebase.auth().currentUser
     let fundRef = firebase.firestore().collection(`users/${user.uid}/funds`).orderBy('fiat')
-    let subscription = fundRef.onSnapshot(snapshot => onFundsUpdate(snapshot, dispatch))
-    dispatch({ type: 'set_fundsSubscription', payload: subscription })   
+    let unsubscribe = fundRef.onSnapshot(snapshot => onFundsUpdate(snapshot, dispatch))
+    dispatch({ type: 'set_unsubscribe_funds_change', payload: unsubscribe })   
   }
 }
 
