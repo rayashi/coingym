@@ -1,17 +1,36 @@
 import firebase from 'react-native-firebase'
+import { signInAnonymously, signIn } from '../auth/AuthActions'
 
-export const subscribeAuthChange = (nav) => {
+export const subscribeAuthChange = (nav, onAuthStateChanged) => {
   return async dispatch => {
-    dispatch({type: 'set_loading', payload: true}) 
-    let unsubscribe = firebase.auth().onAuthStateChanged((currentUser) => {
-      if(currentUser){
-        dispatch({type: 'set_current_user', payload: currentUser})  
-        nav.navigate('Dashboard')
-      }else {
-        nav.navigate('Intro')
-      }
-      dispatch({type: 'set_loading', payload: false}) 
+    dispatch({
+      type: 'set_loading',
+      payload: true
     })
-    dispatch({type: 'set_unsubscribe_auth_change', payload: unsubscribe})
+
+    dispatch({
+      type: 'set_unsubscribe_auth_change',
+      payload: firebase.auth().onAuthStateChanged(onAuthStateChanged)
+    })
+  }
+}
+
+export const guideUser = (user) => {
+  return async dispatch => {
+    if (user) {
+      let funds = await firebase.firestore().collection(`users/${user.uid}/funds`).get()
+      let userHasFunds = Boolean(funds.size)
+
+      if (userHasFunds) {
+        signIn(user, dispatch)
+      } else {
+        signInAnonymously(dispatch)
+      }
+
+    } else {
+      signInAnonymously(dispatch)
+    }
+
+    dispatch({type: 'set_loading', payload: false})
   }
 }

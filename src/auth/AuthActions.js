@@ -28,25 +28,25 @@ export const setUsername = (value) => {
 
 export const login = (username, password, nav, goTo) => {
   return async dispatch => {
-    dispatch({type: 'loading_auth', payload: true}) 
+    dispatch({type: 'loading_auth', payload: true})
     try{
       const user = await firebase.auth().signInAndRetrieveDataWithEmailAndPassword(username, password)
       nav.navigate(goTo)
     }catch (err){
       Toast.show({
-        text: 'This password is not correct', 
+        text: 'This password is not correct',
         type: 'danger',
         position: 'top',
         duration: 2500
       })
     }
-    dispatch({type: 'loading_auth', payload: false}) 
+    dispatch({type: 'loading_auth', payload: false})
   }
 }
 
 export const loginWithFacebook = (nav, goTo) => {
   return async dispatch => {
-    dispatch({type: 'loading_auth', payload: true})  
+    dispatch({type: 'loading_auth', payload: true})
     try{
       const result = await LoginManager.logInWithReadPermissions(['public_profile', 'email'])
       if (result.isCancelled) {
@@ -62,38 +62,47 @@ export const loginWithFacebook = (nav, goTo) => {
       nav.navigate(goTo)
     } catch(error) {
       Toast.show({
-        text: error.toString(), 
+        text: error.toString(),
         type: 'danger',
         position: 'top',
         duration: 3000
       })
       console.log('Login using facebook failed with error: ' + error)
     }
-    dispatch({type: 'loading_auth', payload: false})  
+    dispatch({type: 'loading_auth', payload: false})
   }
 }
 
 export const loginWithGoogle = (nav, goTo) => {
   return async dispatch => {
-    dispatch({type: 'loading_auth', payload: true})  
+    dispatch({type: 'loading_auth', payload: true})
     try {
-      await GoogleSignin.configure() 
+      await GoogleSignin.configure()
       const data = await GoogleSignin.signIn()
       const credential = firebase.auth.GoogleAuthProvider.credential(data.idToken, data.accessToken)
-      const currentUser = await firebase.auth().signInAndRetrieveDataWithCredential(credential) 
+      const currentUser = await firebase.auth().signInAndRetrieveDataWithCredential(credential)
       saveUser(dispatch, currentUser)
       nav.navigate(goTo)
     } catch (error) {
       Toast.show({
-        text: error.toString(), 
+        text: error.toString(),
         type: 'danger',
         position: 'top',
         duration: 3000
       })
       console.log('Login using google failed with error: ' + error)
     }
-    dispatch({type: 'loading_auth', payload: false})  
+    dispatch({type: 'loading_auth', payload: false})
   }
+}
+
+export const signInAnonymously = async (dispatch) => {
+  let user = await firebase.auth().signInAnonymouslyAndRetrieveData()
+  saveUser(dispatch, user)
+}
+
+export const signIn = (user, dispatch) => {
+  dispatch({type: 'set_current_user', payload: user})
 }
 
 const saveUser = (dispatch, currentUser) => {

@@ -7,10 +7,10 @@ import {
   Dimensions,
   ActivityIndicator
 } from 'react-native'
-import { 
+import {
   Content,
-  Text, 
-  Button, 
+  Text,
+  Button,
   Icon,
   Container,
   Right
@@ -20,18 +20,28 @@ import firebase from 'react-native-firebase'
 import LinearGradient from 'react-native-linear-gradient'
 
 import colors from '../styles/base'
-import { subscribeAuthChange } from './LoadingActions'
+import { subscribeAuthChange, guideUser } from './LoadingActions'
 
 class Loading extends Component {
   static navigationOptions = { header: null }
 
   componentDidMount() {
-    this.props.subscribeAuthChange(this.props.navigation)  
+    this.props.subscribeAuthChange(this.props.navigation, this.props.guideUser)
   }
 
   componentWillUnmount() {
-    if(this.props.unsubscribeAuthChange){
+    if (this.props.unsubscribeAuthChange) {
       this.props.unsubscribeAuthChange()
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.currentUser) {
+      if (nextProps.currentUser.user.isAnonymous) {
+        this.props.navigation.navigate('Intro')
+      } else {
+        this.props.navigation.navigate('Dashboard')
+      }
     }
   }
 
@@ -39,7 +49,7 @@ class Loading extends Component {
     return (
       <Container>
         <StatusBar hidden />
-        <LinearGradient colors={colors.gradient} 
+        <LinearGradient colors={colors.gradient}
           style={[styles.mainContent, {
             width: Dimensions.get('window').width,
             height: Dimensions.get('window').height,
@@ -53,16 +63,12 @@ class Loading extends Component {
   }
 }
 
-const mapStateToProps = state => (
-  {
-    unsubscribeAuthChange: state.LoadingReducer.unsubscribeAuthChange
-  }
-)
+const mapStateToProps = state => ({
+  unsubscribeAuthChange: state.LoadingReducer.unsubscribeAuthChange,
+  currentUser : state.AuthReducer.currentUser
+})
 
-export default connect(mapStateToProps, { 
-  subscribeAuthChange
-}
-)(Loading)
+export default connect(mapStateToProps, { subscribeAuthChange, guideUser })(Loading)
 
 const styles = StyleSheet.create({
   container: {
@@ -75,4 +81,3 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 })
-
