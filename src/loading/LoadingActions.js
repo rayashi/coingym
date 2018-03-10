@@ -10,27 +10,29 @@ export const subscribeAuthChange = (nav, onAuthStateChanged) => {
 
     dispatch({
       type: 'set_unsubscribe_auth_change',
-      payload: firebase.auth().onAuthStateChanged(onAuthStateChanged)
+      payload: firebase.auth().onAuthStateChanged(credential => {
+        guideUser(credential, dispatch)
+      })
     })
   }
 }
 
-export const guideUser = (user) => {
-  return async dispatch => {
-    if (user) {
-      let funds = await firebase.firestore().collection(`users/${user.uid}/funds`).get()
-      let userHasFunds = Boolean(funds.size)
+export const guideUser = async (credential, dispatch) => {
+  if (credential) {
+    let funds = await firebase.firestore().collection(`users/${credential.uid}/funds`).get()
+    let user = credential.user || credential._user
 
-      if (userHasFunds) {
-        signIn(user, dispatch)
-      } else {
-        signInAnonymously(dispatch)
-      }
+    user.hasFunds = Boolean(funds.size)
 
+    if (user.hasFunds) {
+      signIn(credential, dispatch)
     } else {
       signInAnonymously(dispatch)
     }
 
-    dispatch({type: 'set_loading', payload: false})
+  } else {
+    signInAnonymously(dispatch)
   }
+
+  dispatch({type: 'set_loading', payload: false})
 }

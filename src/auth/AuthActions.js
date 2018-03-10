@@ -56,9 +56,9 @@ export const loginWithFacebook = (nav, goTo) => {
       if (!data) {
         throw new Error('Something went wrong obtaining the users access token')
       }
-      const credential = firebase.auth.FacebookAuthProvider.credential(data.accessToken)
-      const currentUser = await firebase.auth().signInAndRetrieveDataWithCredential(credential)
-      saveUser(dispatch, currentUser)
+      const facebookCredential = firebase.auth.FacebookAuthProvider.credential(data.accessToken)
+      const credential = await firebase.auth().signInAndRetrieveDataWithCredential(facebookCredential)
+      saveCredential(dispatch, credential)
       nav.navigate(goTo)
     } catch(error) {
       Toast.show({
@@ -79,9 +79,9 @@ export const loginWithGoogle = (nav, goTo) => {
     try {
       await GoogleSignin.configure()
       const data = await GoogleSignin.signIn()
-      const credential = firebase.auth.GoogleAuthProvider.credential(data.idToken, data.accessToken)
-      const currentUser = await firebase.auth().signInAndRetrieveDataWithCredential(credential)
-      saveUser(dispatch, currentUser)
+      const googleCredential = firebase.auth.GoogleAuthProvider.credential(data.idToken, data.accessToken)
+      const credential = await firebase.auth().signInAndRetrieveDataWithCredential(googleCredential)
+      saveCredential(dispatch, credential)
       nav.navigate(goTo)
     } catch (error) {
       Toast.show({
@@ -97,20 +97,20 @@ export const loginWithGoogle = (nav, goTo) => {
 }
 
 export const signInAnonymously = async (dispatch) => {
-  let user = await firebase.auth().signInAnonymouslyAndRetrieveData()
-  saveUser(dispatch, user)
+  let credential = await firebase.auth().signInAnonymouslyAndRetrieveData()
+  saveCredential(dispatch, credential)
 }
 
-export const signIn = (user, dispatch) => {
-  dispatch({type: 'set_current_user', payload: user})
+export const signIn = (credential, dispatch) => {
+  dispatch({type: 'set_current_user', payload: credential})
 }
 
-const saveUser = (dispatch, currentUser) => {
-  dispatch({type: 'set_current_user', payload: currentUser})
-  let userRef = firebase.firestore().collection('users').doc(`${currentUser.user.uid}`)
+const saveCredential = (dispatch, credential) => {
+  dispatch({type: 'set_current_user', payload: credential})
+  let userRef = firebase.firestore().collection('users').doc(`${credential.user.uid}`)
   userRef.set({
-    displayName: currentUser.user.displayName,
-    email: currentUser.user.email,
-    photoURL: currentUser.user.photoURL,
+    displayName: credential.user.displayName,
+    email: credential.user.email,
+    photoURL: credential.user.photoURL,
   })
 }

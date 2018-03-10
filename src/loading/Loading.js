@@ -26,7 +26,7 @@ class Loading extends Component {
   static navigationOptions = { header: null }
 
   componentDidMount() {
-    this.props.subscribeAuthChange(this.props.navigation, this.props.guideUser)
+    this.props.subscribeAuthChange(this.props.navigation)
   }
 
   componentWillUnmount() {
@@ -37,7 +37,8 @@ class Loading extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.currentUser) {
-      if (nextProps.currentUser.user.isAnonymous) {
+      let user = nextProps.currentUser.user || nextProps.currentUser._user
+      if (user.isAnonymous && !user.hasFunds) {
         this.props.navigation.navigate('Intro')
       } else {
         this.props.navigation.navigate('Dashboard')
