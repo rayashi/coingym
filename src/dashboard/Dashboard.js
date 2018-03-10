@@ -6,8 +6,8 @@ import {
   StatusBar,
   FlatList,
 } from 'react-native'
-import { 
-  Text, 
+import {
+  Text,
   Button,
   ListItem,
   Left,
@@ -37,7 +37,7 @@ class Dashboard extends React.Component {
   }
 
   _keyExtractor = (item, index) => item.id
-  
+
   _renderItem = ({item}) => (
     <ListItem avatar>
       <Left>
@@ -51,10 +51,10 @@ class Dashboard extends React.Component {
         <Right>
           <View style={{flexDirection:'row'}}>
             <View style={{marginRight:6}} >
-              {item.ticker.percent_change_24h>0? 
-                <Icon name='md-arrow-dropup' size={20} style={{color:colors.positive}}/> 
-              : 
-                <Icon name='md-arrow-dropdown' size={20} style={{color:colors.negative}}/> 
+              {item.ticker.percent_change_24h>0?
+                <Icon name='md-arrow-dropup' size={20} style={{color:colors.positive}}/>
+              :
+                <Icon name='md-arrow-dropdown' size={20} style={{color:colors.negative}}/>
               }
             </View>
             <View >
@@ -85,22 +85,22 @@ class Dashboard extends React.Component {
         <FlatList
           data={this.props.funds}
           keyExtractor={this._keyExtractor}
-          renderItem={this._renderItem}/>     
+          renderItem={this._renderItem}/>
 
         {this.props.funds.length <= 1?
           <View>
             <Text style={styles.title}>Everyone starts from scratch</Text>
             <Text style={styles.text}>
-              Now that you have some money, it’s time to buy 
-              crypto currencies. We will be your first exchange 
-              for learn, a place where you can buy and sell coins. 
+              Now that you have some money, it’s time to buy
+              crypto currencies. We will be your first exchange
+              for learn, a place where you can buy and sell coins.
             </Text>
             <Text style={styles.text}>Touch here to start.</Text>
-            <Image source={require('../../images/arrow.png')} 
+            <Image source={require('../../images/arrow.png')}
               resizeMode='contain' style={styles.arrow}/>
           </View>
         :null}
-        
+
         <FabButton icon='md-add' onPress={this._onBuy.bind(this)}/>
       </View>
     )

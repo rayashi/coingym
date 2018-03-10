@@ -6,15 +6,15 @@ export const subscribeFundsChange = () => {
     let user = firebase.auth().currentUser
     let fundRef = firebase.firestore().collection(`users/${user.uid}/funds`).orderBy('fiat')
     let unsubscribe = fundRef.onSnapshot(snapshot => onFundsUpdate(snapshot, dispatch))
-    dispatch({ type: 'set_unsubscribe_funds_change', payload: unsubscribe })   
+    dispatch({ type: 'set_unsubscribe_funds_change', payload: unsubscribe })
   }
 }
 
 const onFundsUpdate = (querySnapshot, dispatch) => {
   let funds = []
-  dispatch({ type: 'set_funds', payload: funds }) 
+  dispatch({ type: 'set_funds', payload: funds })
 
-  querySnapshot.forEach(async doc => { 
+  querySnapshot.forEach(async doc => {
     let fund = {
       id: doc.id,
       ...doc.data(),

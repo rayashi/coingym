@@ -16,12 +16,11 @@ const drawerRoutes = {
   Deposit: { screen: Deposit },
   Dashboard: { screen: Dashboard },
   CoinList: { screen: CoinList },
-  Order: { screen: Order},
-  
+  Order: { screen: Order}
 }
 
 export default Routes = StackNavigator(drawerRoutes,
-  { 
+  {
     drawerBackgroundColor: 'rgba(0,0,0,0)'
   }
 )
