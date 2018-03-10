@@ -5,9 +5,8 @@ export const setMarkets = (value) => {
   return {type: 'set_markets', payload: value}
 }
 
-export const getMarkets = (index) => {
+export const getMarkets = (funds) => {
   return async dispatch => {
-    if(index<0) return null
     dispatch({ type: 'loading_markets', payload: true })
     let markets = []
     let ref = firebase.firestore().collection('markets').orderBy('sort')
@@ -17,11 +16,11 @@ export const getMarkets = (index) => {
     })
     dispatch({ type: 'add_markets', payload: markets })
     dispatch({ type: 'loading_markets', payload: false })
-    getMarketPrices(markets, dispatch)
+    getMarketPrices(markets, funds, dispatch)
   }
 }
 
-const getMarketPrices = (markets, dispatch) => {
+const getMarketPrices = (markets, funds, dispatch) => {
   markets.map( async market => {
     market.base.ticker = { price_usd: 1 }
     market.quote.ticker = { price_usd: 1 }
@@ -50,6 +49,13 @@ const getMarketPrices = (markets, dispatch) => {
     market.price = market.base.ticker.price_usd / market.quote.ticker.price_usd
     market.price = market.price.toFixed(market.quote.precision)
     market.loadingPrice = false
+    market.available = getMarketAvailability(market, funds)
     dispatch({ type: 'update_market', payload: market })
   })
+}
+
+const getMarketAvailability = (market, funds) =>{
+  let fund = funds.find(f => f.id == market.quote.id)
+  if(fund) return true
+  return false
 }

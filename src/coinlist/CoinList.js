@@ -24,13 +24,9 @@ class CoinList extends React.Component {
   
   componentWillMount () {
     this.props.setMarkets([])
-    this.props.getMarkets()
+    this.props.getMarkets(this.props.funds)
   }
-
-  _loadMoreMakets(){
-    this.props.getMarkets()
-  }
-
+  
   _onSelectPair(pair){
     this.props.navigation.navigate('Order', {pair})
   }
@@ -59,7 +55,8 @@ class CoinList extends React.Component {
 const mapStateToProps = state => (
   {
     loading: state.CoinListReducer.loading,
-    markets: state.CoinListReducer.markets
+    markets: state.CoinListReducer.markets,
+    funds: state.DashboardReducer.funds
   }
 )
 
