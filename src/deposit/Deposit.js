@@ -13,6 +13,7 @@ import {
 } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
 import { connect } from 'react-redux'
+import { Toast } from 'native-base'
 
 class Deposit extends React.Component {
   static navigationOptions = { header: null }
@@ -33,8 +34,18 @@ class Deposit extends React.Component {
   }
 
   _makeDeposit() {
-    deposit(this.props.value)
-    this.props.navigation.navigate('Dashboard')
+    if (!this.state.value) {
+      Toast.show({
+        text: 'Please type some value to deposit',
+        type: 'danger',
+        position: 'bottom',
+        buttonText: 'OK',
+        duration: 2500
+      })
+    } else {
+      deposit(this.state.value)
+      this.props.navigation.navigate('Dashboard')
+    }
   }
 
   render() {
@@ -53,6 +64,7 @@ class Deposit extends React.Component {
         :null}
         <Text style={styles.label}>Initial deposit value in dollar</Text>
         <TextInput
+          onChangeText={(value) => this.setState({ value })}
           width={'100%'}
           style={formsStyles.inputBackgrounded}
           keyboardType='numeric'

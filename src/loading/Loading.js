@@ -20,7 +20,7 @@ import firebase from 'react-native-firebase'
 import LinearGradient from 'react-native-linear-gradient'
 
 import colors from '../styles/base'
-import { subscribeAuthChange, guideUser } from './LoadingActions'
+import { subscribeAuthChange } from './LoadingActions'
 
 class Loading extends Component {
   static navigationOptions = { header: null }
@@ -69,7 +69,7 @@ const mapStateToProps = state => ({
   currentUser : state.AuthReducer.currentUser
 })
 
-export default connect(mapStateToProps, { subscribeAuthChange, guideUser })(Loading)
+export default connect(mapStateToProps, { subscribeAuthChange })(Loading)
 
 const styles = StyleSheet.create({
   container: {
