@@ -18,17 +18,36 @@ import CustomHeader from '../shared/CustomHeader'
 import CustomLoading from '../shared/CustomLoading'
 import { setMarkets, getMarkets } from './CoinListActions'
 import MarketItem from './MarketItem'
+import UnavailableModal from './UnavailableModal'
 
 class CoinList extends React.Component {
   static navigationOptions = { header: null }
-  
+  state = { 
+    modalVisible: false,
+    selectedMarket: null 
+  }
+
   componentWillMount () {
     this.props.setMarkets([])
     this.props.getMarkets(this.props.funds)
   }
   
-  _onSelectPair(pair){
-    this.props.navigation.navigate('Order', {pair})
+  _onSelectPair(market){
+    if(!market.available){
+      this.setState({
+        modalVisible: true,
+        selectedMarket: market
+      })
+      return null
+    }
+    this.props.navigation.navigate('Order', {market})
+  }
+
+  _onModalClose(){
+    this.setState({
+      modalVisible: true,
+      selectedMarket: null
+    })
   }
 
   _keyExtractor = (item, index) => item.id
@@ -47,6 +66,10 @@ class CoinList extends React.Component {
           keyExtractor={this._keyExtractor}
           renderItem={this._renderItem}/>
         <CustomLoading show={this.props.loading}/>
+        <UnavailableModal
+          onclose={this._onModalClose.bind(this)} 
+          visible={this.state.modalVisible}
+          market={this.state.selectedMarket}/>
       </View>
     )
   }
