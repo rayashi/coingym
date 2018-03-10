@@ -1,55 +1,61 @@
 import axios from 'axios'
+import firebase from 'react-native-firebase'
 
-
-export const setLoading = (value) => {
-  return {
-    type: 'loading_reviews',
-    payload: value
-  }
+export const setMarkets = (value) => {
+  return {type: 'set_markets', payload: value}
 }
 
-export const getCoinsPrice = (paywith) => {
-  return dispatch => {
-    dispatch({ type: 'loading_coins_info', payload: true })
-    let instance = axios.create({baseURL: 'https://api.coinmarketcap.com/v1/ticker/'})
-    instance.get()
-      .then(response => {
-        getCoinsInfo(response.data, paywith, dispatch)
-      })
-      .catch(error => {
-        dispatch({ type: 'error_coins_price'})
-      })
-  }
-}
-
-const getCoinsInfo = (prices, paywith, dispatch) => {
-  dispatch({ type: 'loading_coins_info', payload: true })
-  let instance = axios.create({baseURL: 'https://files.coinmarketcap.com/generated/search/quick_search.json'})
-  instance.get()
-    .then(response => processCoinsInfo(prices, response.data, paywith, dispatch))
-    .catch(error => {
-      dispatch({ type: 'error_coins_info'})
+export const getMarkets = (funds) => {
+  return async dispatch => {
+    dispatch({ type: 'loading_markets', payload: true })
+    let markets = []
+    let ref = firebase.firestore().collection('markets').orderBy('sort')
+    let snapshot = await ref.get()
+    snapshot.forEach(async doc => {
+      markets.push({ ...doc.data(), id: doc.id, loadingPrice: true})
     })
-
+    dispatch({ type: 'add_markets', payload: markets })
+    dispatch({ type: 'loading_markets', payload: false })
+    getMarketPrices(markets, funds, dispatch)
+  }
 }
 
-const processCoinsInfo = (prices, infos, paywith, dispatch) => {
-  let pairs = []
-  prices.map(item => {
-    let info = infos.find(function (obj) { return obj.slug === item.id })
-
-    pair = {
-      id: `${item.symbol}/${paywith.symbol}`,
-      buy: {
-        symbol: item.symbol, 
-        name: item.name,
-        image: `https://files.coinmarketcap.com/static/img/coins/64x64/${info.id}.png`
-      },
-      paywith,
-      price: item.price_usd
+const getMarketPrices = (markets, funds, dispatch) => {
+  markets.map( async market => {
+    market.base.ticker = { price_usd: 1 }
+    market.quote.ticker = { price_usd: 1 }
+    if(market.base.id != 'usd'){
+      try{
+        let instance = axios.create({
+          baseURL: `https://api.coinmarketcap.com/v1/ticker/${market.base.name}/`
+        })
+        let result = await instance.get()
+        market.base.ticker = result.data[0]
+      }catch(error) {
+        console.log(`Error on ticker: ${market.base.name}, error: ${error}`)
+      }
     }
-    pairs.push(pair)
+    if(market.quote.id != 'usd'){
+      try{
+        let instance = axios.create({
+          baseURL: `https://api.coinmarketcap.com/v1/ticker/${market.quote.name}/`
+        })
+        let result = await instance.get()
+        market.quote.ticker = result.data[0]
+      }catch(error) {
+        console.log(`Error on ticker: ${market.quote.name}, error: ${error}`)
+      }
+    }
+    market.price = market.base.ticker.price_usd / market.quote.ticker.price_usd
+    market.price = market.price.toFixed(market.quote.precision)
+    market.loadingPrice = false
+    market.available = getMarketAvailability(market, funds)
+    dispatch({ type: 'update_market', payload: market })
   })
-  dispatch({ type: 'set_pairs', payload: pairs})
-  dispatch({ type: 'success_coins_info', payload: prices})
+}
+
+const getMarketAvailability = (market, funds) =>{
+  let fund = funds.find(f => f.id == market.quote.id)
+  if(fund) return true
+  return false
 }
