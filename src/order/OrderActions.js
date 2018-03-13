@@ -2,9 +2,9 @@ import { Toast } from 'native-base'
 import firebase from 'react-native-firebase'
 
 
-export const placeOrder = (action, order, nav, goto) => {
+export const placeOrder = (action, order, callback) => {
   return async dispatch => {
-    dispatch({type: 'loading_order', payload: true}) 
+    dispatch({type: 'loading_order', payload: true})
     try{
       let ref = firebase.firestore().collection('orders')
       const user = firebase.auth().currentUser
@@ -33,16 +33,16 @@ export const placeOrder = (action, order, nav, goto) => {
       }
       await ref.add(data)
       updateFunds(data)
-      nav.navigate(goto)
-    }catch (err){
+      callback()
+    } catch (err) {
       Toast.show({
-        text: 'Sorry, Error trying place your order', 
+        text: 'Sorry, Error trying place your order',
         type: 'danger',
         position: 'top',
         duration: 2500
       })
     }
-    dispatch({type: 'loading_order', payload: false}) 
+    dispatch({type: 'loading_order', payload: false})
   }
 }
 

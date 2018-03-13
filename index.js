@@ -5,7 +5,7 @@ import { Root } from 'native-base'
 
 import App from './src/App';
 
-const Coingym = props => (
+const Coingym = () => (
   <Root>
     <App />
   </Root>
