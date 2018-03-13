@@ -1,4 +1,4 @@
-import colors from '../styles/base'
+import { colors } from '../styles/base'
 import { formsStyles } from '../styles/forms'
 import { deposit } from './DepositActions'
 import { Button, Text } from 'native-base'
@@ -56,7 +56,7 @@ class Deposit extends React.Component {
         {!this.state.keyboard?
           <View style={styles.hiddenContent}>
             <Image source={ require('../../images/saving.png')} style={styles.image}/>
-            <Text style={styles.title}>Let's Start?</Text>
+            <Text style={styles.title}>Let’s Start?</Text>
             <Text style={styles.text}>To start investing you need make your first deposit,
               <Text style={styles.boldText}> relax this is not a real money.</Text></Text>
             <Text style={styles.text}>After that you will be able to buy cryptocoins</Text>

@@ -8,20 +8,19 @@ import {
 } from 'react-native'
 import {
   Text,
-  Button,
   ListItem,
   Left,
   Right,
   Body,
   Icon
 } from 'native-base'
-import LinearGradient from 'react-native-linear-gradient'
 import { connect } from 'react-redux'
 
-import colors from '../styles/base'
+import { colors } from '../styles/base'
 import CustomHeader from '../shared/CustomHeader'
 import FabButton from '../shared/FabButton'
 import { subscribeFundsChange } from './DashboardActions'
+import { setOrderAction } from '../order/OrderActions'
 
 class Dashboard extends React.Component {
   static navigationOptions = { header: null }
@@ -45,7 +44,13 @@ class Dashboard extends React.Component {
       </Left>
       <Body>
         <Text >{item.name}</Text>
-        <Text style={{fontWeight:'bold'}} >{item.amount.toFixed(item.precision)}</Text>
+        <Text style={{fontWeight:'bold'}} >
+          { item.amountInOrder? 
+            (item.amount - item.amountInOrder).toFixed(item.precision)
+          :
+            item.amount.toFixed(item.precision)
+          }
+        </Text>
       </Body>
       {item.ticker?
         <Right>
@@ -73,6 +78,7 @@ class Dashboard extends React.Component {
 
 
   _onBuy() {
+    this.props.setOrderAction('buy')
     this.props.navigation.navigate('CoinList')
   }
 
@@ -114,7 +120,8 @@ const mapStateToProps = state => (
 )
 
 export default connect(mapStateToProps, {
-  subscribeFundsChange
+  subscribeFundsChange,
+  setOrderAction
 })(Dashboard)
 
 const styles = StyleSheet.create({

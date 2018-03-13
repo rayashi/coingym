@@ -9,7 +9,7 @@ import {
 import LinearGradient from 'react-native-linear-gradient'
 
 import AppIntroSlider from 'react-native-app-intro-slider'
-import colors from '../styles/base'
+import { colors } from '../styles/base'
 
 const styles = StyleSheet.create({
   image: {

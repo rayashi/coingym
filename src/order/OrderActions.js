@@ -2,26 +2,39 @@ import { Toast } from 'native-base'
 import firebase from 'react-native-firebase'
 
 
-export const placeOrder = (pair, nav, goto) => {
+export const placeOrder = (action, order, nav, goto) => {
   return async dispatch => {
     dispatch({type: 'loading_order', payload: true}) 
     try{
       let ref = firebase.firestore().collection('orders')
       const user = firebase.auth().currentUser
-      let order = {
+      let data = {
+        symbol: order.symbol,
+        placedPrice: parseFloat(order.price),
         user: user.uid,
-        pair: `${pair.buy.symbol}/${pair.paywith.symbol}`,
-        type: 'buy',
-        price: pair.price,
-        amount: pair.buy.amount,
-        status: 'executed'
+        action: action,
+        createdAt: (new Date()).getTime(),
+        status: 'pending',
+        type: 'market',
+        base: {
+          id: order.base.id,
+          name: order.base.name,
+          image: order.base.image,
+          precision: order.base.precision,
+          placedAmount: order.base.amount
+        },
+        quote: {
+          id: order.quote.id,
+          name: order.quote.name,
+          image: order.quote.image,
+          precision: order.quote.precision,
+          placedAmount: order.quote.amount
+        }
       }
-      let doc = await ref.add(order)
-      
+      await ref.add(data)
+      updateFunds(data)
       nav.navigate(goto)
-
     }catch (err){
-      console.log(err)
       Toast.show({
         text: 'Sorry, Error trying place your order', 
         type: 'danger',
@@ -31,4 +44,41 @@ export const placeOrder = (pair, nav, goto) => {
     }
     dispatch({type: 'loading_order', payload: false}) 
   }
+}
+
+export const updateFunds = async order => {
+  let fundId = null
+  if(order.action === 'buy'){
+    fundId = order.quote.id
+  }else {
+    fundId = order.base.id
+  }
+  let fundRef = firebase.firestore().doc(`users/${order.user}/funds/${fundId}`)
+  let doc = await fundRef.get()
+  if(doc.exists){
+    let fund = doc.data()
+    if(order.action === 'buy'){
+      fund.amountInOrder = fund.amountInOrder + order.quote.placedAmount
+    }else{
+      fund.amountInOrder = fund.amountInOrder - order.base.placedAmount
+    }
+    fundRef.set(fund)
+  }
+}
+
+export const setOrderAction = (value) => {
+  return {type: 'set_order_action', payload: value}
+}
+
+export const initialOrderSetup = (funds, market) => {
+  let fund = funds.find(f => f.id === market.quote.id)
+  market.quote.amount = 0
+  market.quote.maximumValue = fund.amount - fund.amountInOrder
+  market.base.amount = 0
+  market.base.maximumValue = (market.quote.maximumValue/market.price)
+  market.base.maximumValue = market.base.maximumValue.toFixed(market.base.precision)
+  market.base.maximumValue = parseFloat(market.base.maximumValue)
+  market.base.step = market.base.maximumValue / 1000
+  market.quote.step = market.quote.maximumValue / 1000
+  return market
 }

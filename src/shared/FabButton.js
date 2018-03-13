@@ -9,7 +9,7 @@ import {
   Icon,
 } from 'native-base'
 
-import colors from '../styles/base'
+import { colors } from '../styles/base'
 
 export default class FabButton extends Component {
 

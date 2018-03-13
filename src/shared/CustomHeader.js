@@ -9,6 +9,8 @@ import {
   Icon,
 } from 'native-base'
 
+import { colors } from '../styles/base'
+
 export default class CustomHeader extends Component {
 
   render() {

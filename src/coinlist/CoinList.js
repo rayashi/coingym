@@ -4,16 +4,13 @@ import {
   View,
   Image,
   StatusBar,
-  FlatList,
-  TouchableOpacity,
-  ActivityIndicator,
-  Dimensions
+  FlatList
 } from 'react-native'
 import { Text } from 'native-base'
 import LinearGradient from 'react-native-linear-gradient'
 import { connect } from 'react-redux'
 
-import colors from '../styles/base'
+import { colors } from '../styles/base'
 import CustomHeader from '../shared/CustomHeader'
 import CustomLoading from '../shared/CustomLoading'
 import { setMarkets, getMarkets } from './CoinListActions'
@@ -33,6 +30,7 @@ class CoinList extends React.Component {
   }
   
   _onSelectPair(market){
+    if(market.loadingPrice) return null
     if(!market.available){
       this.setState({
         modalVisible: true,

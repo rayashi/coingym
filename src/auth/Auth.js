@@ -22,7 +22,7 @@ import { connect } from 'react-redux'
 import firebase from 'react-native-firebase'
 import LinearGradient from 'react-native-linear-gradient'
 
-import colors from '../styles/base'
+import { colors } from '../styles/base'
 import { formsStyles } from '../styles/forms'
 import { 
   setUsername, 

@@ -2,98 +2,109 @@ import React from 'react'
 import {
   StyleSheet,
   View,
-  Image,
   StatusBar,
-  Keyboard,
-  FlatList,
-  Slider
 } from 'react-native'
 import { 
   Text, 
   Button,
-  Left,
-  Right,
-  Body,
-  Fab,
-  Icon,
-  Card,
-  CardItem,
   Container,
   Content
 } from 'native-base'
-import LinearGradient from 'react-native-linear-gradient'
 import { connect } from 'react-redux'
 
-import colors from '../styles/base'
+import { colors } from '../styles/base'
 import CustomHeader from '../shared/CustomHeader'
-import { placeOrder } from './OrderActions'
-
+import CustomLoading from '../shared/CustomLoading'
+import { initialOrderSetup, placeOrder } from './OrderActions'
+import OrderCard from './OrderCard'
 
 class Order extends React.Component {
   static navigationOptions = { header: null }
+  state = { order: null }
   
-  constructor(props) {
-    super(props);
-    this.state = { 
-      balance: null,
-      pair: null
-    }
-  }
-
   componentWillMount () {
-    let { pair } = this.props.navigation.state.params
-    let { mycoins } = this.props
-    let balance = mycoins.find(function (obj) { return obj.symbol === pair.paywith.symbol })
-    pair.paywith.amount = 0
-    pair.paywith.available = balance.amount
-    pair.buy.amount = 0
-    pair.buy.maximumValue = pair.paywith.available/pair.price
+    let { market } = this.props.navigation.state.params
+    let { funds } = this.props
     this.setState({
-      pair: pair
+      order: initialOrderSetup(funds, market)
     })
   }
 
   _onPlaceOrder() {
-    this.props.placeOrder(this.state.pair, this.props.navigation, 'Dashboard')
+    if(this.props.loading) return null
+    this.props.placeOrder(
+      this.props.order.action,
+      this.state.order, 
+      this.props.navigation, 
+      'Dashboard'
+    )
   }
 
-  _onChangePayWith(value){
-    let { pair } = this.state
+  _onChangeQuoteAmount(value){
+    let { order } = this.state
     this.setState({
-      pair: {
-        ...pair,
-        paywith : {
-          ...pair.paywith,
+      order: {
+        ...order,
+        quote : {
+          ...order.quote,
           amount: value
         },
-        buy : {
-          ...pair.buy,
-          amount: value / pair.price
-        }
-      }
-    })
-  }
-  _onChangeBuy(value){
-    let { pair } = this.state
-    this.setState({
-      pair: {
-        ...pair,
-        paywith : {
-          ...pair.paywith,
-          amount: pair.price * value
-        },
-        buy : {
-          ...this.state.pair.buy,
-          amount: value
+        base : {
+          ...order.base,
+          amount: parseFloat((value/order.price).toFixed(order.base.precision))
         }
       }
     })
   }
 
+  _onChangeBaseAmount(value){
+    let { order } = this.state
+    this.setState({
+      order: {
+        ...order,
+        quote : {
+          ...order.quote,
+          amount: parseFloat((order.price*value).toFixed(order.quote.precision))
+        },
+        base : {
+          ...this.state.order.base,
+          amount: value
+        }
+      }
+    })
+  }
+
+  _onIncrementQuote(){
+    let { order } = this.state
+    if(order.quote.amount >= order.quote.maximumValue) return null
+    let value = order.quote.amount + order.quote.step
+    this._onChangeQuoteAmount(value)
+  }
+
+  _onIncrementBase(){
+    let { order } = this.state
+    if(order.base.amount >= order.base.maximumValue) return null
+    let value = order.base.amount + order.base.step
+    this._onChangeBaseAmount(value)
+  }
+
+  _onDecrementQuote(){
+    let { order } = this.state
+    if(order.quote.amount <= 0) return null
+    let value = order.quote.amount - order.quote.step
+    this._onChangeQuoteAmount(value)
+  }
+  
+  _onDecrementBase(){
+    let { order } = this.state
+    if(order.base.amount <= 0) return null
+    let value = order.base.amount - order.base.step
+    this._onChangeBaseAmount(value)
+  }
 
   render() {
-    let { pair } = this.state
-    if(!pair) return null
+    let { order } = this.state
+    if(!order) return null
 
     return (
       <View style={{flex:1}}>
@@ -101,61 +112,21 @@ class Order extends React.Component {
         <CustomHeader title='Order'/>
         <Container style={{padding:8}}>
           <Content>
-            <Card style={styles.card}>
-              <CardItem>
-                <Body style={styles.cardBody}>
-                  <Image source={{ uri: pair.paywith.image  }} style={styles.coinImage}/>      
-                  <Text style={styles.ask}>How much {pair.paywith.name}s do you want yo spend?</Text>
-                  <Slider width='100%'
-                    value={pair.paywith.amount}
-                    maximumValue={this.state.pair.paywith.available}
-                    onValueChange={val => {
-                      this._onChangePayWith.bind(this)(val)
-                    }}
-                    step={0.01}/>
-
-                  <View style={styles.amountLine}>
-                    <View>
-
-                    </View>
-                    <View>
-                      <Text> {pair.paywith.amount} {pair.paywith.symbol}</Text>    
-                    </View>                    
-                  </View>
-
-                </Body>
-              </CardItem>
-            </Card>
-            <Card style={styles.card}>
-              <CardItem>
-                <Body style={styles.cardBody}>
-                  <Image source={{ uri: pair.buy.image  }} style={styles.coinImage}/>      
-                  <Text style={styles.ask}>How much {pair.buy.name}s do you want to buy?</Text>
-                  <Slider width='100%'
-                    value={pair.buy.amount}
-                    maximumValue={pair.buy.maximumValue}
-                    onValueChange={val => {
-                      this._onChangeBuy.bind(this)(val)
-                    }}
-                    step={0.00000001}/>
-                  
-                  <View style={styles.amountLine}>
-                    <View>
-
-                    </View>
-                    <View>
-                      <Text> {pair.buy.amount} {pair.buy.symbol}</Text>
-                    </View>                    
-                  </View>
-
-                </Body>
-              </CardItem>
-            </Card>
-            <Button block rounded style={styles.button} onPress={this._onPlaceOrder.bind(this)}>
+            <OrderCard coin={order.quote} type='spend'
+              onChangeAmount={val => this._onChangeQuoteAmount.bind(this)(val)}
+              onIncrement={this._onIncrementQuote.bind(this)}
+              onDecrement={this._onDecrementQuote.bind(this)}/>
+            <OrderCard coin={order.base} type='receive'
+              onChangeAmount={val => this._onChangeBaseAmount.bind(this)(val)}
+              onIncrement={this._onIncrementBase.bind(this)}
+              onDecrement={this._onDecrementBase.bind(this)}/>
+            <Button block rounded style={styles.button} 
+              onPress={this._onPlaceOrder.bind(this)}>
               <Text>Place my order</Text>
             </Button>
           </Content>
         </Container>
+        <CustomLoading show={this.props.loading}/>
       </View>
     )
   }
@@ -163,7 +134,9 @@ class Order extends React.Component {
 
 const mapStateToProps = state => (
   {
-    mycoins: state.DashboardReducer.mycoins,
+    order: state.OrderReducer.order,
+    loading: state.OrderReducer.loading,
+    funds: state.DashboardReducer.funds,
   }
 )
 
@@ -172,56 +145,8 @@ export default connect(mapStateToProps, {
 })(Order)
 
 const styles = StyleSheet.create({
-  text: {
-    color: 'gray',
-    backgroundColor: 'transparent',
-    textAlign: 'center',
-    paddingHorizontal: 20,
-    fontSize: 18,
-  },
-  boldText: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 20,
-  },
-  title: {
-    paddingHorizontal: 18,
-    fontSize: 22,
-    color: colors.primary,
-    backgroundColor: 'transparent',
-    textAlign: 'center',
-    marginVertical: 16,
-  },
-  mainContent: {
-    padding:10,
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  ask: {
-    alignSelf:'center', 
-    fontSize: 18, 
-    fontWeight: 'bold', 
-    marginBottom: 20
-  },
-  card: {
-    padding: 6
-  },
   button: {
     marginTop: 12,
     backgroundColor: colors.primary
-  },
-  amountLine: {
-    flex: 1,
-    flexDirection: 'row',
-    marginTop: 14
-  },
-  cardBody: {
-    alignItems: 'center'
-  },
-  coinImage: {
-    width: 35, 
-    height: 35,
-    marginBottom: 10
   }
 })
