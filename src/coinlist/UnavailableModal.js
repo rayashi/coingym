@@ -19,9 +19,7 @@ export default class UnavailableModal extends Component {
         animationType='slide'
         transparent={true}
         visible={this.props.visible}
-        onRequestClose={() => {
-          alert('Modal has been closed.');
-        }}>
+        onRequestClose={() => null}>
         <View style={styles.modal}>
           <View>
             <View style={styles.iconsLine}>
@@ -33,10 +31,10 @@ export default class UnavailableModal extends Component {
             </View>    
             
             <Text style={styles.msg}>
-              You can't buy {this.props.market.base.id.toUpperCase()} paying 
+              You can’t buy {this.props.market.base.id.toUpperCase()} paying 
               with {this.props.market.quote.id.toUpperCase()}, because you 
-              dont have BTC. Please buy 
-              some {this.props.market.quote.id.toUpperCase()} first!
+              dont have {this.props.market.quote.id.toUpperCase()}.
+              Please get some {this.props.market.quote.id.toUpperCase()} first!
             </Text>
             <Button block rounded light success 
               onPress={this.props.onclose}>

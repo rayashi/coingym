@@ -15,7 +15,7 @@ export default (state = INITIAL_STATE, action) => {
   }else if(action.type === 'update_market'){
     let markets = state.markets.slice(0)
     markets
-      .filter( market => market.id == action.payload.id )
+      .filter( market => market.id === action.payload.id )
       .map( market => market = action.payload )
     return {...state, markets: markets}
   }

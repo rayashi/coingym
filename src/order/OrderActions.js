@@ -31,8 +31,9 @@ export const placeOrder = (action, order, callback) => {
           placedAmount: order.quote.amount
         }
       }
-      await ref.add(data)
-      updateFunds(data)
+      const orderDoc = await ref.add(data)
+      incrementAmountInOrder(data)
+      createPendingFund(orderDoc.id, data)
       callback()
     } catch (err) {
       Toast.show({
@@ -46,7 +47,22 @@ export const placeOrder = (action, order, callback) => {
   }
 }
 
-export const updateFunds = async order => {
+const createPendingFund = async (orderId, order) => {
+  const fundRef = firebase.firestore().doc(`users/${order.user}/funds/${orderId}`)
+  fundRef.set({
+    id: order.base.id,
+    order: orderId,
+    name: order.base.name,
+    precision: order.base.precision,
+    image: order.base.image,
+    amount: order.base.placedAmount,
+    fiat: order.base.id === 'usd' ? true : false,
+    pending: true,
+    action: order.action,
+  })
+}
+
+const incrementAmountInOrder = async order => {
   let fundId = null
   if(order.action === 'buy'){
     fundId = order.quote.id
@@ -58,10 +74,11 @@ export const updateFunds = async order => {
   if(doc.exists){
     let fund = doc.data()
     if(order.action === 'buy'){
-      fund.amountInOrder = fund.amountInOrder + order.quote.placedAmount
+      fund.amountInOrder = (fund.amountInOrder||0) + order.quote.placedAmount
     }else{
-      fund.amountInOrder = fund.amountInOrder - order.base.placedAmount
+      fund.amountInOrder = (fund.amountInOrder||0) + order.base.placedAmount
     }
+    fund.amountInOrder = Number(fund.amountInOrder.toFixed(fund.precision))
     fundRef.set(fund)
   }
 }
@@ -73,7 +90,7 @@ export const setOrderAction = (value) => {
 export const initialOrderSetup = (funds, market) => {
   let fund = funds.find(f => f.id === market.quote.id)
   market.quote.amount = 0
-  market.quote.maximumValue = fund.amount - fund.amountInOrder
+  market.quote.maximumValue = fund.amount - (fund.amountInOrder||0)
   market.base.amount = 0
   market.base.maximumValue = (market.quote.maximumValue/market.price)
   market.base.maximumValue = market.base.maximumValue.toFixed(market.base.precision)

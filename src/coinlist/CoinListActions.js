@@ -24,7 +24,7 @@ const getMarketPrices = (markets, funds, dispatch) => {
   markets.map( async market => {
     market.base.ticker = { price_usd: 1 }
     market.quote.ticker = { price_usd: 1 }
-    if(market.base.id != 'usd'){
+    if(market.base.id !== 'usd'){
       try{
         let instance = axios.create({
           baseURL: `https://api.coinmarketcap.com/v1/ticker/${market.base.name}/`
@@ -35,7 +35,7 @@ const getMarketPrices = (markets, funds, dispatch) => {
         console.log(`Error on ticker: ${market.base.name}, error: ${error}`)
       }
     }
-    if(market.quote.id != 'usd'){
+    if(market.quote.id !== 'usd'){
       try{
         let instance = axios.create({
           baseURL: `https://api.coinmarketcap.com/v1/ticker/${market.quote.name}/`
@@ -55,7 +55,8 @@ const getMarketPrices = (markets, funds, dispatch) => {
 }
 
 const getMarketAvailability = (market, funds) =>{
-  let fund = funds.find(f => f.id == market.quote.id)
-  if(fund) return true
+  let fund = funds.find(f => f.id === market.quote.id)
+  if(fund && !fund.pending && (fund.amount - (fund.amountInOrder||0)) > 0) 
+    return true
   return false
 }

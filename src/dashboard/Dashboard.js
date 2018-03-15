@@ -2,25 +2,19 @@ import React from 'react'
 import {
   StyleSheet,
   View,
-  Image,
   StatusBar,
   FlatList,
 } from 'react-native'
-import {
-  Text,
-  ListItem,
-  Left,
-  Right,
-  Body,
-  Icon
-} from 'native-base'
 import { connect } from 'react-redux'
 
 import { colors } from '../styles/base'
 import CustomHeader from '../shared/CustomHeader'
 import FabButton from '../shared/FabButton'
-import { subscribeFundsChange } from './DashboardActions'
+import { subscribeFundsChange, subscribeOrdersChange } from './DashboardActions'
 import { setOrderAction } from '../order/OrderActions'
+import DashboardItem from './DashboardItem'
+import DashboardMessage from './DashboardMessage'
+
 
 class Dashboard extends React.Component {
   static navigationOptions = { header: null }
@@ -34,79 +28,32 @@ class Dashboard extends React.Component {
       this.props.unsubscribeFundsChange()
     }
   }
-
-  _keyExtractor = (item, index) => item.id
-
-  _renderItem = ({item}) => (
-    <ListItem avatar>
-      <Left>
-        <Image source={{ uri: item.image }}  style={{width: 32, height: 32}}/>
-      </Left>
-      <Body>
-        <Text >{item.name}</Text>
-        <Text style={{fontWeight:'bold'}} >
-          { item.amountInOrder? 
-            (item.amount - item.amountInOrder).toFixed(item.precision)
-          :
-            item.amount.toFixed(item.precision)
-          }
-        </Text>
-      </Body>
-      {item.ticker?
-        <Right>
-          <View style={{flexDirection:'row'}}>
-            <View style={{marginRight:6}} >
-              {item.ticker.percent_change_24h>0?
-                <Icon name='md-arrow-dropup' size={20} style={{color:colors.positive}}/>
-              :
-                <Icon name='md-arrow-dropdown' size={20} style={{color:colors.negative}}/>
-              }
-            </View>
-            <View >
-              <Text style={item.ticker.percent_change_24h>0? styles.positive : styles.negative}>
-                {item.ticker.percent_change_24h}%
-              </Text>
-            </View>
-          </View>
-          <Text style={item.ticker.percent_change_24h>0? styles.positive : styles.negative}>
-            {item.ticker.price_usd} USD
-          </Text>
-        </Right>
-      :null}
-    </ListItem>
-  )
-
-
+  
   _onBuy() {
     this.props.setOrderAction('buy')
     this.props.navigation.navigate('CoinList')
   }
 
+  _keyExtractor = item => item.id
+
+  _renderItem = ({item}) => <DashboardItem item={item}/>
+
   render() {
     return (
-      <View style={{flex:1}}>
+      <View style={styles.main}>
         <StatusBar backgroundColor={colors.primary}/>
         <CustomHeader title='Funds'/>
+
         <FlatList
           data={this.props.funds}
           keyExtractor={this._keyExtractor}
           renderItem={this._renderItem}/>
 
-        {this.props.funds.length <= 1?
-          <View>
-            <Text style={styles.title}>Everyone starts from scratch</Text>
-            <Text style={styles.text}>
-              Now that you have some money, it’s time to buy
-              crypto currencies. We will be your first exchange
-              for learn, a place where you can buy and sell coins.
-            </Text>
-            <Text style={styles.text}>Touch here to start.</Text>
-            <Image source={require('../../images/arrow.png')}
-              resizeMode='contain' style={styles.arrow}/>
-          </View>
-        :null}
+        <DashboardMessage funds={this.props.funds} 
+          loading={this.props.loading}/>
 
-        <FabButton icon='md-add' onPress={this._onBuy.bind(this)}/>
+        <FabButton icon='md-add' 
+          onPress={this._onBuy.bind(this)}/>
       </View>
     )
   }
@@ -114,8 +61,9 @@ class Dashboard extends React.Component {
 
 const mapStateToProps = state => (
   {
+    loading: state.DashboardReducer.loading,
     funds: state.DashboardReducer.funds,
-    unsubscribeFundsChange: state.DashboardReducer.unsubscribeFundsChange
+    unsubscribeFundsChange: state.DashboardReducer.unsubscribeFundsChange,
   }
 )
 
@@ -125,58 +73,7 @@ export default connect(mapStateToProps, {
 })(Dashboard)
 
 const styles = StyleSheet.create({
-  image: {
-    width: 180,
-    height: 180,
-  },
-  text: {
-    color: 'gray',
-    backgroundColor: 'transparent',
-    textAlign: 'center',
-    paddingHorizontal: 20,
-    fontSize: 18,
-  },
-  boldText: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 20,
-  },
-  title: {
-    paddingHorizontal: 18,
-    fontSize: 22,
-    color: colors.primary,
-    backgroundColor: 'transparent',
-    textAlign: 'center',
-    marginVertical: 16,
-  },
-  mainContent: {
-    padding:10,
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  button: {
-    marginTop: 10
-  },
-  label: {
-    paddingHorizontal: 18,
-    fontSize: 24,
-    color: 'white',
-    textAlign: 'center',
-    marginTop: 40
-  },
-  arrow: {
-    width: 40,
-    height: 130,
-    alignSelf: 'center',
-    marginBottom: 20,
-    marginLeft: 30
-  },
-  negative: {
-    color: colors.negative
-  },
-  positive: {
-    color: colors.positive
+  main: {
+    flex: 1
   }
-
 })
