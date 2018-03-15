@@ -4,8 +4,8 @@ import {
   View,
   StatusBar,
 } from 'react-native'
-import { 
-  Text, 
+import {
+  Text,
   Button,
   Container,
   Content
@@ -17,11 +17,12 @@ import CustomHeader from '../shared/CustomHeader'
 import CustomLoading from '../shared/CustomLoading'
 import { initialOrderSetup, placeOrder } from './OrderActions'
 import OrderCard from './OrderCard'
+import CreateOrderModal from './CreateOrderModal'
 
 class Order extends React.Component {
   static navigationOptions = { header: null }
-  state = { order: null }
-  
+  state = { order: null, orderCreated: false }
+
   componentWillMount () {
     let { market } = this.props.navigation.state.params
     let { funds } = this.props
@@ -31,13 +32,21 @@ class Order extends React.Component {
   }
 
   _onPlaceOrder() {
-    if(this.props.loading) return null
+    if (this.props.loading) return null
     this.props.placeOrder(
       this.props.order.action,
-      this.state.order, 
-      this.props.navigation, 
-      'Dashboard'
+      this.state.order,
+      this._orderCreated.bind(this)
     )
+  }
+
+  _orderCreated() {
+    this.setState({ orderCreated : true })
+  }
+
+  _goToFunds() {
+    this.setState({ orderCreated : false })
+    this.props.navigation.navigate('Dashboard')
   }
 
   _onChangeQuoteAmount(value){
@@ -94,7 +103,7 @@ class Order extends React.Component {
     let value = order.quote.amount - order.quote.step
     this._onChangeQuoteAmount(value)
   }
-  
+
   _onDecrementBase(){
     let { order } = this.state
     if(order.base.amount <= 0) return null
@@ -120,13 +129,14 @@ class Order extends React.Component {
               onChangeAmount={val => this._onChangeBaseAmount.bind(this)(val)}
               onIncrement={this._onIncrementBase.bind(this)}
               onDecrement={this._onDecrementBase.bind(this)}/>
-            <Button block rounded style={styles.button} 
+            <Button block rounded style={styles.button}
               onPress={this._onPlaceOrder.bind(this)}>
               <Text>Place my order</Text>
             </Button>
           </Content>
         </Container>
         <CustomLoading show={this.props.loading}/>
+        <CreateOrderModal visible={this.state.orderCreated} onClose={this._goToFunds.bind(this)}/>
       </View>
     )
   }

@@ -25,6 +25,7 @@
         "eqeqeq": ["error", "smart"]
     },
     "globals": {
-        "require": true
+        "require": true,
+        "alert": true
     }
 }
