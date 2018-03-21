@@ -62,7 +62,7 @@ export default class DashboardItem extends Component {
             <Icon name='ios-time-outline' style={styles.pendingIcon}/>
             <Text style={styles.pendingText}>&nbsp; Pending</Text>
           </View>
-          <TouchableOpacity style={styles.cancelButton}>
+          <TouchableOpacity style={styles.cancelButton} onPress={this.props.onOrderCancel(item)}>
             <Text style={styles.buttonText}>Cancel</Text>
           </TouchableOpacity>
         </Right>

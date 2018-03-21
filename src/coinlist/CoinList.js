@@ -2,12 +2,9 @@ import React from 'react'
 import {
   StyleSheet,
   View,
-  Image,
   StatusBar,
   FlatList
 } from 'react-native'
-import { Text } from 'native-base'
-import LinearGradient from 'react-native-linear-gradient'
 import { connect } from 'react-redux'
 
 import { colors } from '../styles/base'

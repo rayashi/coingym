@@ -1,6 +1,33 @@
 import axios from 'axios'
 import firebase from 'react-native-firebase'
 
+const database = firebase.firestore()
+
+export const cancelOrder = (fundToDelete) => {
+  return async dispatch => {
+    dispatch({ type: 'deleting_order', payload: true })
+    await database.runTransaction(t => cancelOrderTransaction(t,fundToDelete, dispatch))
+    dispatch({ type: 'deleting_order', payload: false })
+  }
+}
+
+const cancelOrderTransaction = async (transaction, fundToDelete, dispatch) => {
+  const user = firebase.auth().currentUser  
+  const fundToDeleteRef = database.doc(`users/${user.uid}/funds/${fundToDelete.id}`)
+  const orderRef = database.doc(`orders/${fundToDelete.order}`)
+  const orderDoc = await transaction.get(orderRef)
+  const order = orderDoc.data()
+  const fundToDecrementRef = database.doc(`users/${user.uid}/funds/${order.action==='buy'?order.quote.id:order.base.id}`)
+  const fundToDecrementDoc = await transaction.get(fundToDecrementRef)
+  let amountInOrder = fundToDecrementDoc.data().amountInOrder
+  amountInOrder -= order.action==='buy'? order.quote.placedAmount : order.base.placedAmount 
+  const fundToDecrement = {...fundToDecrementDoc.data(), id:fundToDecrementDoc.id, amountInOrder}
+  transaction.delete(fundToDeleteRef)
+  transaction.delete(orderRef)
+  transaction.update(fundToDecrementRef, { amountInOrder })
+  dispatch({ type: 'update_fund', payload: fundToDecrement })
+  dispatch({ type: 'delete_fund', payload: fundToDelete })
+}
 
 export const subscribeFundsChange = () => {
   return dispatch => {

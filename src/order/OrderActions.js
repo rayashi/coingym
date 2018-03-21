@@ -21,14 +21,14 @@ export const placeOrder = (action, order, callback) => {
           name: order.base.name,
           image: order.base.image,
           precision: order.base.precision,
-          placedAmount: order.base.amount
+          placedAmount: Number(order.base.amount.toFixed(order.base.precision))
         },
         quote: {
           id: order.quote.id,
           name: order.quote.name,
           image: order.quote.image,
           precision: order.quote.precision,
-          placedAmount: order.quote.amount
+          placedAmount: Number(order.quote.amount.toFixed(order.quote.precision))
         }
       }
       const orderDoc = await ref.add(data)
