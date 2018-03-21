@@ -6,13 +6,15 @@ import { Provider } from 'react-redux'
 import Routes from './Routes'
 import reducers from './Reducers'
 
+import NavigationService from './NavigationService'
+
 export default class App extends Component{
 
   render() {
     return(
       <Provider store={createStore(reducers, {}, applyMiddleware(ReduxThunk))}>
-        <Routes ref={nav => { this.navigator = nav }} />
+        <Routes ref={nav => { NavigationService.setTopLevelNavigator(nav) }} />
       </Provider>
-    ) 
+    )
   }
 }
