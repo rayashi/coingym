@@ -31,19 +31,28 @@ class Dashboard extends React.Component {
   
   _onBuy() {
     this.props.setOrderAction('buy')
-    this.props.navigation.navigate('CoinList')
+    this.props.navigation.navigate('CoinList', {fundToSell:null})
   }
 
   _onOrderCancel = item => e => {
     e.preventDefault()
-    if(this.props.deletingOrder) return null
+    if(this.props.deletingOrder || !item.pending) return null
     this.props.cancelOrder(item)
+  }
+
+  _onSell = item => e => {
+    e.preventDefault()
+    if(this.props.deletingOrder || item.pending || item.fiat) return null
+    this.props.setOrderAction('sell')
+    this.props.navigation.navigate('CoinList', {fundToSell:item})
   }
 
   _keyExtractor = item => item.id
 
   _renderItem = ({item}) => (
-    <DashboardItem item={item} onOrderCancel={this._onOrderCancel}/>
+    <DashboardItem item={item}
+      onSell={this._onSell} 
+      onOrderCancel={this._onOrderCancel}/>
   )
 
   render() {

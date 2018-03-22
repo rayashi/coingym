@@ -5,11 +5,14 @@ export const setMarkets = (value) => {
   return {type: 'set_markets', payload: value}
 }
 
-export const getMarkets = (funds) => {
+export const getMarkets = (funds, fundToSell) => {
   return async dispatch => {
     dispatch({ type: 'loading_markets', payload: true })
     let markets = []
     let ref = firebase.firestore().collection('markets').orderBy('sort')
+    if(fundToSell){
+      ref = ref.where('base.id', '==', fundToSell.id)
+    }
     let snapshot = await ref.get()
     snapshot.forEach(async doc => {
       markets.push({ ...doc.data(), id: doc.id, loadingPrice: true})

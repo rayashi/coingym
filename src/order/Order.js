@@ -27,14 +27,14 @@ class Order extends React.Component {
     let { market } = this.props.navigation.state.params
     let { funds } = this.props
     this.setState({
-      order: initialOrderSetup(funds, market)
+      order: initialOrderSetup(funds, market, this.props.order.action)
     })
   }
 
-  _onPlaceOrder() {
+  _onPlaceOrder = e => {
+    e.preventDefault()
     if (this.props.loading) return null
     this.props.placeOrder(
-      this.props.order.action,
       this.state.order,
       this._orderCreated.bind(this)
     )
@@ -44,12 +44,13 @@ class Order extends React.Component {
     this.setState({ orderCreated : true })
   }
 
-  _goToFunds() {
+  _goToFunds = e => {
+    e.preventDefault()
     this.setState({ orderCreated : false })
     this.props.navigation.navigate('Dashboard')
   }
 
-  _onChangeQuoteAmount(value){
+  _onChangeQuoteAmount = value => {
     let { order } = this.state
     this.setState({
       order: {
@@ -66,7 +67,7 @@ class Order extends React.Component {
     })
   }
 
-  _onChangeBaseAmount(value){
+  _onChangeBaseAmount = value => {
     let { order } = this.state
     this.setState({
       order: {
@@ -83,28 +84,32 @@ class Order extends React.Component {
     })
   }
 
-  _onIncrementQuote(){
+  _onIncrementQuote = e =>{
+    e.preventDefault()
     let { order } = this.state
     if(order.quote.amount >= order.quote.maximumValue) return null
     let value = order.quote.amount + order.quote.step
     this._onChangeQuoteAmount(value)
   }
 
-  _onIncrementBase(){
+  _onIncrementBase = e => {
+    e.preventDefault()
     let { order } = this.state
     if(order.base.amount >= order.base.maximumValue) return null
     let value = order.base.amount + order.base.step
     this._onChangeBaseAmount(value)
   }
 
-  _onDecrementQuote(){
+  _onDecrementQuote = e => {
+    e.preventDefault()
     let { order } = this.state
     if(order.quote.amount <= 0) return null
     let value = order.quote.amount - order.quote.step
     this._onChangeQuoteAmount(value)
   }
 
-  _onDecrementBase(){
+  _onDecrementBase = e =>{
+    e.preventDefault()
     let { order } = this.state
     if(order.base.amount <= 0) return null
     let value = order.base.amount - order.base.step
@@ -121,22 +126,38 @@ class Order extends React.Component {
         <CustomHeader title='Order'/>
         <Container style={{padding:8}}>
           <Content>
-            <OrderCard coin={order.quote} type='spend'
-              onChangeAmount={val => this._onChangeQuoteAmount.bind(this)(val)}
-              onIncrement={this._onIncrementQuote.bind(this)}
-              onDecrement={this._onDecrementQuote.bind(this)}/>
-            <OrderCard coin={order.base} type='receive'
-              onChangeAmount={val => this._onChangeBaseAmount.bind(this)(val)}
-              onIncrement={this._onIncrementBase.bind(this)}
-              onDecrement={this._onDecrementBase.bind(this)}/>
+            {order.action === 'buy' ? 
+              <View>
+                <OrderCard coin={order.quote} type='spend'
+                  onChangeAmount={val => this._onChangeQuoteAmount(val)}
+                  onIncrement={this._onIncrementQuote}
+                  onDecrement={this._onDecrementQuote}/>
+                <OrderCard coin={order.base} type='receive'
+                  onChangeAmount={val => this._onChangeBaseAmount(val)}
+                  onIncrement={this._onIncrementBase}
+                  onDecrement={this._onDecrementBase}/>
+              </View>
+            :
+              <View>
+                <OrderCard coin={order.base} type='sell'
+                  onChangeAmount={val => this._onChangeBaseAmount(val)}
+                  onIncrement={this._onIncrementBase}
+                  onDecrement={this._onDecrementBase}/>
+                <OrderCard coin={order.quote} type='receive'
+                  onChangeAmount={val => this._onChangeQuoteAmount(val)}
+                  onIncrement={this._onIncrementQuote}
+                  onDecrement={this._onDecrementQuote}/>
+              </View>
+            }
+
             <Button block rounded style={styles.button}
-              onPress={this._onPlaceOrder.bind(this)}>
+              onPress={this._onPlaceOrder}>
               <Text>Place my order</Text>
             </Button>
           </Content>
         </Container>
         <CustomLoading show={this.props.loading}/>
-        <CreateOrderModal visible={this.state.orderCreated} onClose={this._goToFunds.bind(this)}/>
+        <CreateOrderModal visible={this.state.orderCreated} onClose={this._goToFunds}/>
       </View>
     )
   }

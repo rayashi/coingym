@@ -2,7 +2,7 @@ import { Toast } from 'native-base'
 import firebase from 'react-native-firebase'
 
 
-export const placeOrder = (action, order, callback) => {
+export const placeOrder = (order, callback) => {
   return async dispatch => {
     dispatch({type: 'loading_order', payload: true})
     try{
@@ -12,7 +12,7 @@ export const placeOrder = (action, order, callback) => {
         symbol: order.symbol,
         placedPrice: parseFloat(order.price),
         user: user.uid,
-        action: action,
+        action: order.action,
         createdAt: (new Date()).getTime(),
         status: 'pending',
         type: 'market',
@@ -87,12 +87,21 @@ export const setOrderAction = (value) => {
   return {type: 'set_order_action', payload: value}
 }
 
-export const initialOrderSetup = (funds, market) => {
-  let fund = funds.find(f => f.id === market.quote.id)
+export const initialOrderSetup = (funds, market, action) => {
+  market.action = action
   market.quote.amount = 0
-  market.quote.maximumValue = fund.amount - (fund.amountInOrder||0)
   market.base.amount = 0
-  market.base.maximumValue = (market.quote.maximumValue/market.price)
+  if(action === 'buy'){
+    let fund = funds.find(f => f.id === market.quote.id)
+    market.quote.maximumValue = fund.amount - (fund.amountInOrder||0)
+    market.base.maximumValue = market.quote.maximumValue / market.price
+  }else {
+    let fund = funds.find(f => f.id === market.base.id)
+    market.base.maximumValue = fund.amount - (fund.amountInOrder||0) 
+    market.quote.maximumValue = market.base.maximumValue * market.price    
+  }
+  market.quote.maximumValue = market.quote.maximumValue.toFixed(market.quote.precision)
+  market.quote.maximumValue = parseFloat(market.quote.maximumValue)
   market.base.maximumValue = market.base.maximumValue.toFixed(market.base.precision)
   market.base.maximumValue = parseFloat(market.base.maximumValue)
   market.base.step = market.base.maximumValue / 1000

@@ -25,8 +25,6 @@ const cancelOrderTransaction = async (transaction, fundToDelete, dispatch) => {
   transaction.delete(fundToDeleteRef)
   transaction.delete(orderRef)
   transaction.update(fundToDecrementRef, { amountInOrder })
-  dispatch({ type: 'update_fund', payload: fundToDecrement })
-  dispatch({ type: 'delete_fund', payload: fundToDelete })
 }
 
 export const subscribeFundsChange = () => {

@@ -20,54 +20,56 @@ export default class DashboardItem extends Component {
   render() {
     const { item } = this.props
     return (
-      <ListItem avatar>
-      <Left>
-        <Image source={{ uri: item.image }}
-          style={[styles.image, item.pending?styles.pending:null]}/>
-      </Left>
-      <Body>
-        <Text style={item.pending?styles.pending:null}>{item.name}</Text>
-        <Text style={[styles.amount,item.pending?styles.pending:null]} >
-          { item.amountInOrder? 
-            (item.amount - item.amountInOrder).toFixed(item.precision)
-          :
-            item.amount.toFixed(item.precision)
-          }
-        </Text>
-      </Body>
-      {item.percentChange24h || item.priceUsd?
-        <Right>
-          <View style={styles.righTop}>
-            <View style={{marginRight:6}} >
-              {item.percentChange24h > 0?
-                <Icon name='md-arrow-dropup' size={20} style={{color:colors.positive}}/>
-              :
-                <Icon name='md-arrow-dropdown' size={20} style={{color:colors.negative}}/>
-              }
+      <ListItem avatar onPress={this.props.onSell(item)}>
+        <Left>
+          <Image source={{ uri: item.image }}
+            style={[styles.image, item.pending?styles.pending:null]}/>
+        </Left>
+        <Body >
+          <Text style={item.pending?styles.pending:null}>
+            {item.name}
+          </Text>
+          <Text style={[styles.amount,item.pending?styles.pending:null]} >
+            {(item.amount - (item.amountInOrder||0)).toFixed(item.precision)}
+          </Text>
+        </Body>
+        {item.percentChange24h || item.priceUsd?
+          <Right>
+            <View style={styles.righTop}>
+              <View style={{marginRight:6}} >
+                {item.percentChange24h > 0?
+                  <Icon name='md-arrow-dropup' size={20} style={{color:colors.positive}}/>
+                :
+                  <Icon name='md-arrow-dropdown' size={20} style={{color:colors.negative}}/>
+                }
+              </View>
+              <View >
+                <Text style={item.percentChange24h>0? styles.positive : styles.negative}>
+                  {item.percentChange24h}%
+                </Text>
+              </View>
             </View>
-            <View >
-              <Text style={item.percentChange24h>0? styles.positive : styles.negative}>
-                {item.percentChange24h}%
+            <Text style={item.percentChange24h>0? styles.positive : styles.negative}>
+              {item.priceUsd} USD
+            </Text>
+          </Right>
+        :null}
+        {item.pending?
+          <Right>
+            <View style={styles.righTop}>
+              <Icon name='ios-time-outline' style={styles.pendingIcon}/>
+              <Text style={styles.pendingText}>&nbsp; 
+                {item.action?
+                  <Text style={styles.pendingText}>{(item.action+'ing')} </Text>
+                :null}
               </Text>
             </View>
-          </View>
-          <Text style={item.percentChange24h>0? styles.positive : styles.negative}>
-            {item.priceUsd} USD
-          </Text>
-        </Right>
-      :null}
-      {item.pending?
-        <Right>
-          <View style={styles.righTop}>
-            <Icon name='ios-time-outline' style={styles.pendingIcon}/>
-            <Text style={styles.pendingText}>&nbsp; Pending</Text>
-          </View>
-          <TouchableOpacity style={styles.cancelButton} onPress={this.props.onOrderCancel(item)}>
-            <Text style={styles.buttonText}>Cancel</Text>
-          </TouchableOpacity>
-        </Right>
-      :null}
-    </ListItem>
+            <TouchableOpacity style={styles.cancelButton} onPress={this.props.onOrderCancel(item)}>
+              <Text style={styles.buttonText}>Cancel</Text>
+            </TouchableOpacity>
+          </Right>
+        :null}
+      </ListItem>
     )
   }
 }
@@ -107,13 +109,16 @@ const styles = StyleSheet.create({
   cancelButton: {
     backgroundColor: 'gray',
     paddingVertical: 2,
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
     borderRadius: 5,
     marginTop: 2
   },
   buttonText: {
     fontSize: 14,
     color: 'white'
+  },
+  nameLine: {
+    flexDirection:'row'
   }
 })
 

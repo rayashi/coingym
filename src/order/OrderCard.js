@@ -21,13 +21,15 @@ export default class OrderCard extends Component {
 
   _renderSpendHeader = coin => ( 
     <View style={styles.headerLine}>
-      <View style={{marginHorizontal:5}}>
-        <Text style={[styles.headerTitle, {color:colors.negative, marginTop: -10},]}>SPEND</Text>
+      <View style={styles.headerColumn}>
+        <Text style={styles.headerTitleNegative}>
+          {this.props.type === 'spend'?'SPEND':'SELL' }
+        </Text>
       </View>
-      <View style={{marginHorizontal:5}}>
-        <Icon name='md-arrow-round-forward' size={32} style={{color:colors.negative, marginTop: -10}}/>
+      <View style={styles.headerColumn}>
+        <Icon name='md-arrow-round-forward' size={32} style={styles.arrowIconNegative}/>
       </View>
-      <View style={{marginHorizontal:5}}>
+      <View style={styles.headerColumn}>
         <Image source={{ uri: coin.image  }} style={styles.coinImage}/>      
       </View>                    
     </View>
@@ -35,14 +37,14 @@ export default class OrderCard extends Component {
 
   _renderReceiveHeader = coin => ( 
     <View style={styles.headerLine}>
-      <View style={{marginHorizontal:5}}>
+      <View style={styles.headerColumn}>
         <Image source={{ uri: coin.image  }} style={styles.coinImage}/>      
       </View>
-      <View style={{marginHorizontal:5}}>
-        <Icon name='md-arrow-round-back' size={32} style={{color:colors.positive, marginTop: -10}}/>
+      <View style={styles.headerColumn}>
+        <Icon name='md-arrow-round-back' size={32} style={styles.arrowIconPositive}/>
       </View>
-      <View style={{marginHorizontal:5}}>
-        <Text style={[styles.headerTitle, {color:colors.positive, marginTop: -10},]}>RECEIVE</Text>
+      <View style={styles.headerColumn}>
+        <Text style={styles.headerTitlePositive}>RECEIVE</Text>
       </View>
     </View>
   )
@@ -56,33 +58,33 @@ export default class OrderCard extends Component {
       <Card style={styles.card}>
         <CardItem>
           <Body style={styles.cardBody}>
-            {type === 'spend'?
+            {type === 'spend' || type === 'sell'?
               this._renderSpendHeader(coin)
             :
               this._renderReceiveHeader(coin)
             }
             
             <Slider width='100%'
-              minimumTrackTintColor={type==='spend'?colors.negative:colors.positive}
-              thumbTintColor={type==='spend'?colors.negative:colors.positive}
+              minimumTrackTintColor={type==='spend'||type==='sell'?colors.negative:colors.positive}
+              thumbTintColor={type==='spend'||type==='sell'?colors.negative:colors.positive}
               value={coin.amount}
               maximumValue={coin.maximumValue}
               onValueChange={this.props.onChangeAmount}
               step={coin.step}/>
 
             <View style={styles.amountLine}>
-              <View style={{flex:1}}>
+              <View>
                 <TouchableOpacity style={styles.fixButton} onPress={this.props.onDecrement}>
                   <Text style={{fontSize: 40, marginBottom: 5}}>-</Text>
                 </TouchableOpacity>
               </View>
-              <View style={{flex:6, alignItems:'center'}}>
+              <View style={styles.amount}>
                 <Text> 
                   {coin.amount.toFixed(coin.precision)}
                   <Text style={{fontWeight:'bold'}}>&nbsp;{coin.id.toUpperCase()}</Text>
                 </Text>    
               </View>                    
-              <View style={{flex:1, alignItems: 'flex-end'}}>
+              <View>
                 <TouchableOpacity style={styles.fixButton} onPress={this.props.onIncrement}>
                   <Text style={{ fontSize: 30, marginBottom: 2.5}}>+</Text>
                 </TouchableOpacity>
@@ -123,9 +125,17 @@ const styles = StyleSheet.create({
     height: 35,
     marginBottom: 10
   },
-  headerTitle: {
+  headerTitlePositive: {
     fontSize: 18,
     fontWeight: 'bold',
+    color:colors.positive, 
+    marginTop: -10
+  },
+  headerTitleNegative: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color:colors.negative, 
+    marginTop: -10
   },
   fixButton: {
     alignItems: 'center',
@@ -135,6 +145,21 @@ const styles = StyleSheet.create({
     width: 26,
     height: 26,
     borderRadius: 13
+  },
+  amount: {
+    flex:6, 
+    alignItems:'center'
+  },
+  arrowIconNegative: {
+    color:colors.negative, 
+    marginTop: -10
+  },
+  arrowIconPositive: {
+    color:colors.positive, 
+    marginTop: -10
+  },
+  headerColumn: {
+    marginHorizontal: 8
   }
 })
 

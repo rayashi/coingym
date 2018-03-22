@@ -16,14 +16,19 @@ import UnavailableModal from './UnavailableModal'
 
 class CoinList extends React.Component {
   static navigationOptions = { header: null }
-  state = { 
+  state = {
+    title: 'Buy / Pay With', 
     modalVisible: false,
     selectedMarket: null 
   }
 
   componentWillMount () {
+    const { fundToSell } = this.props.navigation.state.params
+    if(fundToSell) {
+      this.setState({title:'Sell / Receive In'})
+    } 
     this.props.setMarkets([])
-    this.props.getMarkets(this.props.funds)
+    this.props.getMarkets(this.props.funds, fundToSell)
   }
   
   _onSelectPair(market){
@@ -55,7 +60,7 @@ class CoinList extends React.Component {
     return (
       <View style={styles.main}>
         <StatusBar hidden={false} backgroundColor={colors.primary}/>
-        <CustomHeader title='Buy / Pay With'/>
+        <CustomHeader title={this.state.title}/>
         <FlatList
           data={this.props.markets}
           keyExtractor={this._keyExtractor}
