@@ -4,6 +4,9 @@ import firebase from 'react-native-firebase'
 import { AccessToken, LoginManager } from 'react-native-fbsdk'
 import { GoogleSignin } from 'react-native-google-signin'
 
+const auth = firebase.auth()
+const database = firebase.firestore()
+
 export const setPassword = (value) => {
   return {
     type: 'set_password',
@@ -46,7 +49,7 @@ export const login = (username, password, nav, goTo) => {
 
 export const loginWithFacebook = (nav, goTo) => {
   return async dispatch => {
-    dispatch({type: 'loading_auth', payload: true})
+    await dispatch({type: 'set_redirect', payload: false})
     try{
       const result = await LoginManager.logInWithReadPermissions(['public_profile', 'email'])
       if (result.isCancelled) {
@@ -57,10 +60,21 @@ export const loginWithFacebook = (nav, goTo) => {
         throw new Error('Something went wrong obtaining the users access token')
       }
       const facebookCredential = firebase.auth.FacebookAuthProvider.credential(data.accessToken)
-      const credential = await firebase.auth().signInAndRetrieveDataWithCredential(facebookCredential)
+      let credential = null
+      if(auth.currentUser){
+        try{
+          credential = await auth.currentUser.linkAndRetrieveDataWithCredential(facebookCredential)
+        } catch(error) {
+          await deleteOldUserData(dispatch)
+          credential = await firebase.auth().signInAndRetrieveDataWithCredential(facebookCredential)
+        }
+      }else {
+        credential = await firebase.auth().signInAndRetrieveDataWithCredential(facebookCredential)
+      }
       saveCredential(dispatch, credential)
       nav.navigate(goTo)
     } catch(error) {
+      dispatch({type: 'loading_auth', payload: false})
       Toast.show({
         text: error.toString(),
         type: 'danger',
@@ -69,21 +83,31 @@ export const loginWithFacebook = (nav, goTo) => {
       })
       console.log('Login using facebook failed with error: ' + error)
     }
-    dispatch({type: 'loading_auth', payload: false})
   }
 }
 
 export const loginWithGoogle = (nav, goTo) => {
   return async dispatch => {
-    dispatch({type: 'loading_auth', payload: true})
+    await dispatch({type: 'set_redirect', payload: false})
     try {
       await GoogleSignin.configure()
       const data = await GoogleSignin.signIn()
       const googleCredential = firebase.auth.GoogleAuthProvider.credential(data.idToken, data.accessToken)
-      const credential = await firebase.auth().signInAndRetrieveDataWithCredential(googleCredential)
+      let credential = null
+      if(auth.currentUser){
+        try{
+          credential = await auth.currentUser.linkAndRetrieveDataWithCredential(googleCredential)
+        } catch(error) {
+          await deleteOldUserData(dispatch)
+          credential = await firebase.auth().signInAndRetrieveDataWithCredential(googleCredential)
+        }
+      }else {
+        credential = await firebase.auth().signInAndRetrieveDataWithCredential(googleCredential)
+      }
       saveCredential(dispatch, credential)
-      nav.navigate(goTo)
+      if(nav)nav.navigate(goTo)
     } catch (error) {
+      dispatch({type: 'loading_auth', payload: false})
       Toast.show({
         text: error.toString(),
         type: 'danger',
@@ -92,25 +116,50 @@ export const loginWithGoogle = (nav, goTo) => {
       })
       console.log('Login using google failed with error: ' + error)
     }
-    dispatch({type: 'loading_auth', payload: false})
   }
 }
 
-export const signInAnonymously = async (dispatch) => {
-  let credential = await firebase.auth().signInAnonymouslyAndRetrieveData()
-  saveCredential(dispatch, credential)
+export const signInAnonymously = () => {
+  return async dispatch => {
+    dispatch({type: 'set_redirect', payload: false})
+    firebase.auth().signInAnonymouslyAndRetrieveData()
+  }
 }
 
 export const signIn = (credential, dispatch) => {
+  if(!credential) credential = {user: {hasFund: false}}
   dispatch({type: 'set_current_user', payload: credential})
 }
 
-const saveCredential = (dispatch, credential) => {
+const saveCredential = async (dispatch, credential) => {
   dispatch({type: 'set_current_user', payload: credential})
   let userRef = firebase.firestore().collection('users').doc(`${credential.user.uid}`)
   userRef.set({
-    displayName: credential.user.displayName,
+    displayName: credential.additionalUserInfo.profile.name,
     email: credential.user.email,
-    photoURL: credential.user.photoURL,
+    isAnonymous: credential.user.isAnonymous,
+    link: credential.additionalUserInfo.profile.link,
+    locate: credential.additionalUserInfo.profile.locale,
+    picture: getUserPicture(credential)
   })
+}
+
+const getUserPicture = (credential) => {
+  switch(credential.additionalUserInfo.providerId){
+    case 'google.com':
+      return credential.additionalUserInfo.profile.picture
+    case 'facebook.com':
+      return credential.additionalUserInfo.profile.picture.data.url
+  }  
+}
+
+const deleteOldUserData = async (dispatch) => {
+  dispatch({type: 'loading_auth', payload: true})
+  const orders = await database.collection('orders').where('user','==',auth.currentUser.uid).get()
+  await orders.forEach(async doc => await doc.ref.delete())
+  const funds = await database.collection(`users/${auth.currentUser.uid}/funds`).get()
+  await funds.forEach(async doc => await doc.ref.delete())
+  await database.doc(`users/${auth.currentUser.uid}`).delete()
+  await auth.currentUser.delete()
+  dispatch({type: 'loading_auth', payload: true})
 }

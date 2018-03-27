@@ -1,22 +1,15 @@
 import React, { Component } from 'react'
 import {
   StyleSheet,
-  View,
-  Image,
   StatusBar,
   Dimensions,
   ActivityIndicator
 } from 'react-native'
 import {
-  Content,
   Text,
-  Button,
-  Icon,
-  Container,
-  Right
+  Container
 } from 'native-base'
 import { connect } from 'react-redux'
-import firebase from 'react-native-firebase'
 import LinearGradient from 'react-native-linear-gradient'
 
 import { colors } from '../styles/base'
@@ -36,9 +29,9 @@ class Loading extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.currentUser) {
+    if (nextProps.currentUser && nextProps.redirect) {
       let user = nextProps.currentUser.user || nextProps.currentUser._user
-      if (user.isAnonymous && !user.hasFunds) {
+      if (!user || !user.hasFunds) {
         this.props.navigation.navigate('Intro')
       } else {
         this.props.navigation.navigate('Dashboard')
@@ -66,6 +59,7 @@ class Loading extends Component {
 
 const mapStateToProps = state => ({
   unsubscribeAuthChange: state.LoadingReducer.unsubscribeAuthChange,
+  redirect: state.LoadingReducer.redirect,
   currentUser : state.AuthReducer.currentUser
 })
 

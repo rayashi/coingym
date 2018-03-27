@@ -1,5 +1,5 @@
 import firebase from 'react-native-firebase'
-import { signInAnonymously, signIn } from '../auth/AuthActions'
+import { signIn } from '../auth/AuthActions'
 
 import { Alert } from 'react-native'
 
@@ -30,29 +30,21 @@ export const guideUser = async (credential, dispatch) => {
   if (credential) {
     let funds = await database.collection(`users/${credential.uid}/funds`).get()
     let user = credential.user || credential._user
-
     user.hasFunds = Boolean(funds.size)
-
-    if (user.hasFunds) {
-      signIn(credential, dispatch)
-    } else {
-      signInAnonymously(dispatch)
-    }
-
-  } else {
-    signInAnonymously(dispatch)
   }
-
+  signIn(credential, dispatch)
   dispatch({type: 'set_loading', payload: false})
 }
 
 const _setupPushNotifications = async (credential) => {
+  if(!credential) return null
   try {
     await messaging.requestPermissions()
 
     const token = await messaging.getToken()
 
-    database.doc(`users/${credential.uid}`).update({ pushToken: token })
+    const userDoc = await database.doc(`users/${credential.uid}`).get()
+    userDoc.ref.set({...userDoc.data(), pushToken: token})
 
     messaging.onMessage((message) => {
       Alert.alert('Great News', message.fcm.body, [{

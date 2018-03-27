@@ -4,9 +4,9 @@ const INITIAL_STATE = {
 }
 
 export default (state = INITIAL_STATE, action) => {
-  if(action.type == 'loading_auth'){
+  if(action.type === 'loading_auth'){
     return { ...state, loading: action.payload }
-  }else if(action.type == 'set_current_user'){
+  }else if(action.type === 'set_current_user'){
     return { ...state, currentUser: action.payload }
   }
   return state

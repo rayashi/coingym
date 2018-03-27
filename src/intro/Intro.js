@@ -2,14 +2,15 @@ import React from 'react'
 import {
   StyleSheet,
   Text,
-  View,
   Image,
   StatusBar,
 } from 'react-native'
 import LinearGradient from 'react-native-linear-gradient'
+import { connect } from 'react-redux'
 
 import AppIntroSlider from 'react-native-app-intro-slider'
 import { colors } from '../styles/base'
+import { signInAnonymously } from '../auth/AuthActions'
 
 const styles = StyleSheet.create({
   image: {
@@ -60,10 +61,17 @@ const slides = [
   }
 ]
 
-export default class Intro extends React.Component {
+class Intro extends React.Component {
   static navigationOptions = { header: null }
   
+  _onSkip = () => {
+    this.props.navigation.navigate('Auth', {from:'Intro'})
+  }
+  
   _onDone = () => {
+    if(!this.props.currentUser.uid){
+      this.props.signInAnonymously()
+    }
     this.props.navigation.navigate('Deposit')
   }
   
@@ -86,10 +94,24 @@ export default class Intro extends React.Component {
   render() {
     return (  
       <AppIntroSlider
+        skipLabel='Already have an account'
         doneLabel="Let's start"
         slides={slides}
         renderItem={this._renderItem}
-        onDone={this._onDone}/>
+        onDone={this._onDone}
+        onSkip={this._onSkip}
+        bottomButton
+        showSkipButton={!this.props.currentUser.uid}/>
     )
   }
 }
+
+const mapStateToProps = state => (
+  {
+    currentUser : state.AuthReducer.currentUser
+  }
+)
+
+export default connect(mapStateToProps, {
+  signInAnonymously
+})(Intro)

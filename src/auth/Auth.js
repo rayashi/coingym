@@ -5,33 +5,25 @@ import {
   Image,
   StatusBar,
   TouchableOpacity,
-  TextInput,
-  Dimensions,
-  ActivityIndicator
+  Dimensions
 } from 'react-native'
 import { 
   Content,
   Text, 
   Button, 
   Icon,
-  Container,
-  Right
+  Container
 } from 'native-base'
-import { Toast } from 'native-base'
 import { connect } from 'react-redux'
-import firebase from 'react-native-firebase'
 import LinearGradient from 'react-native-linear-gradient'
 
 import { colors } from '../styles/base'
 import { formsStyles } from '../styles/forms'
-import { 
-  setUsername, 
-  setPassword, 
-  login, 
+import {
   loginWithFacebook,
   loginWithGoogle 
 } from './AuthActions'
-
+import CustomLoanding from '../shared/CustomLoading'
 
 class Auth extends Component {
   static navigationOptions = { header: null }
@@ -46,45 +38,19 @@ class Auth extends Component {
     this.props.loginWithGoogle(this.props.navigation, 'Dashboard')
   }
 
-  _onLogin(){
-    if(this.props.loading) return null
-    if(!this._canLogin()) return null
-    this.props.login(this.props.username, this.props.password, this.props.navigation, 'Dashboard')
-  }
-
-  _canLogin(){
-    let { username_valid, password_valid } = this.props 
-    if(!username_valid){
-      Toast.show({
-        text: 'Please, give me a valid email', 
-        type: 'danger',
-        position: 'top',
-        duration: 2500
-      })
-      return false
-    }else if(!password_valid){
-      Toast.show({
-        text: 'This password is to short', 
-        type: 'danger',
-        position: 'top',
-        duration: 2500
-      })
-      return false
-    }
-    return true
-  }
-
-  _onRegister() {
-    this.props.navigation.navigate('Register')
-  }
-
   _onCancel() {
-    this.props.navigation.navigate('Dashboard')
+    const { from } = this.props.navigation.state.params
+    if(from === 'Intro'){
+      this.props.navigation.navigate('Intro')
+    }else {
+      this.props.navigation.navigate('Dashboard')
+    }
   }
 
   render() {
-    return (
+    const { from } = this.props.navigation.state.params
 
+    return (
       <Container>
         <StatusBar hidden />
         
@@ -100,10 +66,21 @@ class Auth extends Component {
                 onPress={this._onCancel.bind(this)}>
                 <Icon name='ios-close-circle-outline' size={32} style={{color:'rgba(255,255,255,0.4)'}}/>
               </TouchableOpacity>
-              <View style={styles.icon}>
-                <Image style={styles.logo} source={require('../../images/pigbit.png')}/>
-                <Text style={{color: 'white', fontSize: 30}}> Coingym </Text>
-              </View>
+              
+              {from === 'Intro' ?
+                <View style={styles.icon}>
+                  <Image style={styles.logo} source={require('../../images/pigbit.png')}/>
+                  <Text style={{color: 'white', fontSize: 30}}> Coingym </Text>
+                </View>
+              :null}
+              {from === 'Order' ?
+                <View style={styles.icon}>
+                  <Icon style={styles.successIcon} name='md-checkmark-circle-outline'/>
+                  <Text style={styles.h1}>Congratulation your order has been successfully created!</Text>
+                  <Text style={styles.h2}>Please sign in then you can follow orders status on the funds screen</Text>
+                </View>
+              :null}
+
               <View style={styles.form}>
                 <View style={styles.buttons} >
                   <Button block bordered light style={formsStyles.button} 
@@ -121,28 +98,19 @@ class Auth extends Component {
             </View>
           </Content>
         </LinearGradient>
-      </Container>
-      
-      
+        <CustomLoanding show={this.props.loading}/>
+      </Container>      
     )
   }
 }
 
 const mapStateToProps = state => (
   {
-    username: state.AuthReducer.username,
-    password: state.AuthReducer.password,
-    loading: state.AuthReducer.loading,
-    name_valid: state.AuthReducer.name_valid,
-    username_valid: state.AuthReducer.username_valid,
-    password_valid: state.AuthReducer.password_valid
+    loading: state.AuthReducer.loading
   }
 )
 
 export default connect(mapStateToProps, { 
-  setUsername, 
-  setPassword,
-  login,
   loginWithFacebook,
   loginWithGoogle
 }
@@ -169,7 +137,7 @@ const styles = StyleSheet.create({
   },
   logo: {
     width: 100,
-    height: 100,
+    height: 100
   },
   close: {
     zIndex: 1,
@@ -181,10 +149,26 @@ const styles = StyleSheet.create({
   mainContent: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   buttons: {
     marginTop: 10
+  },
+  h1: {
+    marginTop: 10,
+    fontSize: 18,
+    textAlign: 'center',
+    fontWeight: 'bold',
+    color: 'white'
+  },
+  h2: {
+    marginTop: 15,
+    fontSize: 16,
+    textAlign: 'center',
+    color: 'rgba(255,255,255,0.8)'
+  },
+  successIcon: {
+    color:'white',
+    fontSize: 60
   }
 })
-

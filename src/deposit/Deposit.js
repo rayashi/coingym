@@ -33,7 +33,7 @@ class Deposit extends React.Component {
     this.keyboardDidHideListener.remove()
   }
 
-  _makeDeposit() {
+  _makeDeposit = () => {
     if (!this.state.value) {
       Toast.show({
         text: 'Please type some value to deposit',
@@ -43,6 +43,7 @@ class Deposit extends React.Component {
         duration: 2500
       })
     } else {
+      Keyboard.dismiss()
       deposit(this.state.value)
       this.props.navigation.navigate('Dashboard')
     }
@@ -69,9 +70,11 @@ class Deposit extends React.Component {
           style={formsStyles.inputBackgrounded}
           keyboardType='numeric'
           placeholder={'USD 30,000.00'}
-          underlineColorAndroid='rgba(0, 0, 0, 0)'/>
+          underlineColorAndroid='rgba(0, 0, 0, 0)'
+          onSubmitEditing={this._makeDeposit}
+          />
 
-        <Button block rounded bordered light style={styles.button} onPress={this._makeDeposit.bind(this)}>
+        <Button block rounded bordered light style={styles.button} onPress={this._makeDeposit}>
           <Text>Make my first deposit</Text>
         </Button>
       </LinearGradient>

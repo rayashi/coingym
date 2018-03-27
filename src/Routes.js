@@ -19,8 +19,4 @@ const drawerRoutes = {
   Order: { screen: Order}
 }
 
-export default Routes = StackNavigator(drawerRoutes,
-  {
-    drawerBackgroundColor: 'rgba(0,0,0,0)'
-  }
-)
+export default StackNavigator(drawerRoutes)

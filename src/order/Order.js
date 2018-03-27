@@ -41,13 +41,21 @@ class Order extends React.Component {
   }
 
   _orderCreated() {
-    this.setState({ orderCreated : true })
+    if(!this.props.currentUser || this.props.currentUser.isAnonymous){
+      this._goToFunds()
+    }else {
+      this.setState({ orderCreated : true })
+    }
   }
 
   _goToFunds = e => {
-    e.preventDefault()
+    if(e) e.preventDefault()
     this.setState({ orderCreated : false })
-    this.props.navigation.navigate('Dashboard')
+    if(!this.props.currentUser || this.props.currentUser.isAnonymous){
+      this.props.navigation.navigate('Auth', {from:'Order'})
+    }else {
+      this.props.navigation.navigate('Dashboard')
+    }
   }
 
   _onChangeQuoteAmount = value => {
@@ -168,6 +176,7 @@ const mapStateToProps = state => (
     order: state.OrderReducer.order,
     loading: state.OrderReducer.loading,
     funds: state.DashboardReducer.funds,
+    currentUser: state.AuthReducer.currentUser
   }
 )
 
