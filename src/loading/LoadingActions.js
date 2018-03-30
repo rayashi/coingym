@@ -11,6 +11,23 @@ const auth = firebase.auth()
 const database = firebase.firestore()
 const messaging = firebase.messaging()
 
+export const getRemoteConfig = () => {
+  return async dispatch => {
+    if (__DEV__) {
+      firebase.config().enableDeveloperMode()
+    }
+    firebase.config().setDefaults({
+      depositMaximumValue: 1000
+    })
+    await firebase.config().activateFetched()
+    const activated = await firebase.config().fetch()
+    if(!activated) return null
+    const snapshot = await firebase.config().getValue('depositMaximumValue')
+    const depositMaximumValue = snapshot.val()
+    dispatch({type: 'set_config', payload: {depositMaximumValue}})  
+  }
+}
+
 export const subscribeAuthChange = () => {
   return async dispatch => {
     dispatch({

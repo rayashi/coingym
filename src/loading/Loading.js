@@ -13,12 +13,16 @@ import { connect } from 'react-redux'
 import LinearGradient from 'react-native-linear-gradient'
 
 import { colors } from '../styles/base'
-import { subscribeAuthChange } from './LoadingActions'
+import { 
+  subscribeAuthChange, 
+  getRemoteConfig 
+} from './LoadingActions'
 
 class Loading extends Component {
   static navigationOptions = { header: null }
 
   componentDidMount() {
+    this.props.getRemoteConfig()
     this.props.subscribeAuthChange(this.props.navigation)
   }
 
@@ -63,7 +67,10 @@ const mapStateToProps = state => ({
   currentUser : state.AuthReducer.currentUser
 })
 
-export default connect(mapStateToProps, { subscribeAuthChange })(Loading)
+export default connect(mapStateToProps, { 
+  subscribeAuthChange,
+  getRemoteConfig
+})(Loading)
 
 const styles = StyleSheet.create({
   container: {
@@ -73,6 +80,6 @@ const styles = StyleSheet.create({
   mainContent: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
 })

@@ -22,7 +22,6 @@ const cancelOrderTransaction = async (transaction, fundToDelete, dispatch) => {
   const fundToDecrementDoc = await transaction.get(fundToDecrementRef)
   let amountInOrder = fundToDecrementDoc.data().amountInOrder
   amountInOrder -= order.action==='buy'? order.quote.placedAmount : order.base.placedAmount
-  const fundToDecrement = {...fundToDecrementDoc.data(), id:fundToDecrementDoc.id, amountInOrder}
   transaction.delete(fundToDeleteRef)
   transaction.delete(orderRef)
   transaction.update(fundToDecrementRef, { amountInOrder })

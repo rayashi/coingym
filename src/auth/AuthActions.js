@@ -178,6 +178,12 @@ const getUserPicture = (credential) => {
 
 const deleteOldUserData = async (dispatch) => {
   dispatch({type: 'loading_auth', payload: true})
+  Toast.show({
+    text: 'Welcome again! We found an account that you already own. All data will be recovered and replace the current',
+    type: 'success',
+    position: 'top',
+    duration: 3500
+  })
   const orders = await database.collection('orders').where('user','==',auth.currentUser.uid).get()
   await orders.forEach(async doc => await doc.ref.delete())
   const funds = await database.collection(`users/${auth.currentUser.uid}/funds`).get()
