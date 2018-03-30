@@ -5,6 +5,8 @@ import { Alert } from 'react-native'
 
 import NavigationService from '../NavigationService'
 
+import Appsee from 'react-native-appsee'
+
 const auth = firebase.auth()
 const database = firebase.firestore()
 const messaging = firebase.messaging()
@@ -37,16 +39,17 @@ export const guideUser = async (credential, dispatch) => {
 }
 
 const _setupPushNotifications = async (credential) => {
-  if(!credential) return null
+  if (!credential) return null
   try {
     await messaging.requestPermissions()
 
     const token = await messaging.getToken()
 
     const userDoc = await database.doc(`users/${credential.uid}`).get()
-    userDoc.ref.set({...userDoc.data(), pushToken: token})
+    userDoc.ref.set({ ...userDoc.data(), pushToken: token })
 
     messaging.onMessage((message) => {
+      Appsee.addEvent('Order executed')
       Alert.alert('Great News', message.fcm.body, [{
         text: 'OK',
         onPress: () => NavigationService.navigate('Dashboard')
@@ -54,6 +57,10 @@ const _setupPushNotifications = async (credential) => {
       {
         cancelable: false
       })
+    })
+
+    messaging.getInitialNotification(() => {
+      Appsee.addEvent('Order executed')
     })
   } catch(e) {
     console.error(e)

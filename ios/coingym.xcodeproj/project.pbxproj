@@ -56,6 +56,7 @@
 		862536C0D38E4FE9ADE343AD /* SafariServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E6679A9973C74279A2F7D937 /* SafariServices.framework */; };
 		7B82D7C096C7494EBE47C5B7 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E83F0E34D9FB4AA59221316B /* SystemConfiguration.framework */; };
 		65E3EA3AA5ED40B9B3286379 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D3F997028C0A4A84A6C01717 /* AddressBook.framework */; };
+		21A9EBF8FB5C41CEA2E9E523 /* libRNAppsee.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 689308EDE1F746FEAD3238D7 /* libRNAppsee.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -329,6 +330,8 @@
 		E6679A9973C74279A2F7D937 /* SafariServices.framework */ = {isa = PBXFileReference; name = "SafariServices.framework"; path = "System/Library/Frameworks/SafariServices.framework"; sourceTree = SDKROOT; fileEncoding = undefined; lastKnownFileType = wrapper.framework; explicitFileType = undefined; includeInIndex = 0; };
 		E83F0E34D9FB4AA59221316B /* SystemConfiguration.framework */ = {isa = PBXFileReference; name = "SystemConfiguration.framework"; path = "System/Library/Frameworks/SystemConfiguration.framework"; sourceTree = SDKROOT; fileEncoding = undefined; lastKnownFileType = wrapper.framework; explicitFileType = undefined; includeInIndex = 0; };
 		D3F997028C0A4A84A6C01717 /* AddressBook.framework */ = {isa = PBXFileReference; name = "AddressBook.framework"; path = "System/Library/Frameworks/AddressBook.framework"; sourceTree = SDKROOT; fileEncoding = undefined; lastKnownFileType = wrapper.framework; explicitFileType = undefined; includeInIndex = 0; };
+		E3E8F5D3563744868282A160 /* RNAppsee.xcodeproj */ = {isa = PBXFileReference; name = "RNAppsee.xcodeproj"; path = "../node_modules/react-native-appsee/ios/RNAppsee.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		689308EDE1F746FEAD3238D7 /* libRNAppsee.a */ = {isa = PBXFileReference; name = "libRNAppsee.a"; path = "libRNAppsee.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -365,6 +368,7 @@
 				862536C0D38E4FE9ADE343AD /* SafariServices.framework in Frameworks */,
 				7B82D7C096C7494EBE47C5B7 /* SystemConfiguration.framework in Frameworks */,
 				65E3EA3AA5ED40B9B3286379 /* AddressBook.framework in Frameworks */,
+				21A9EBF8FB5C41CEA2E9E523 /* libRNAppsee.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -550,6 +554,7 @@
 				A92C616AC2804AA6B8F6BCB0 /* RNFirebase.xcodeproj */,
 				BDA6391FEAEE464EBE3049B7 /* RCTFBSDK.xcodeproj */,
 				5E66B92DE2B946178DCD7F0F /* RNGoogleSignin.xcodeproj */,
+				E3E8F5D3563744868282A160 /* RNAppsee.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1157,6 +1162,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1164,6 +1170,7 @@
 					"$(SRCROOT)\..\node_modules\react-native-firebase\ios\RNFirebase/**",
 					"$(SRCROOT)\..\node_modules\react-native-fbsdk\ios\RCTFBSDK/**",
 					"$(SRCROOT)\..\node_modules\react-native-google-signin\ios\RNGoogleSignin/**",
+					"$(SRCROOT)/../node_modules/react-native-appsee/ios",
 				);
 			};
 			name = Debug;
@@ -1188,6 +1195,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1195,6 +1203,7 @@
 					"$(SRCROOT)\..\node_modules\react-native-firebase\ios\RNFirebase/**",
 					"$(SRCROOT)\..\node_modules\react-native-fbsdk\ios\RCTFBSDK/**",
 					"$(SRCROOT)\..\node_modules\react-native-google-signin\ios\RNGoogleSignin/**",
+					"$(SRCROOT)/../node_modules/react-native-appsee/ios",
 				);
 			};
 			name = Release;
@@ -1220,6 +1229,7 @@
 					"$(SRCROOT)\..\node_modules\react-native-firebase\ios\RNFirebase/**",
 					"$(SRCROOT)\..\node_modules\react-native-fbsdk\ios\RCTFBSDK/**",
 					"$(SRCROOT)\..\node_modules\react-native-google-signin\ios\RNGoogleSignin/**",
+					"$(SRCROOT)/../node_modules/react-native-appsee/ios",
 				);
 			};
 			name = Debug;
@@ -1244,6 +1254,7 @@
 					"$(SRCROOT)\..\node_modules\react-native-firebase\ios\RNFirebase/**",
 					"$(SRCROOT)\..\node_modules\react-native-fbsdk\ios\RCTFBSDK/**",
 					"$(SRCROOT)\..\node_modules\react-native-google-signin\ios\RNGoogleSignin/**",
+					"$(SRCROOT)/../node_modules/react-native-appsee/ios",
 				);
 			};
 			name = Release;
@@ -1277,6 +1288,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1284,6 +1296,7 @@
 					"$(SRCROOT)\..\node_modules\react-native-firebase\ios\RNFirebase/**",
 					"$(SRCROOT)\..\node_modules\react-native-fbsdk\ios\RCTFBSDK/**",
 					"$(SRCROOT)\..\node_modules\react-native-google-signin\ios\RNGoogleSignin/**",
+					"$(SRCROOT)/../node_modules/react-native-appsee/ios",
 				);
 			};
 			name = Debug;
@@ -1317,6 +1330,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1324,6 +1338,7 @@
 					"$(SRCROOT)\..\node_modules\react-native-firebase\ios\RNFirebase/**",
 					"$(SRCROOT)\..\node_modules\react-native-fbsdk\ios\RCTFBSDK/**",
 					"$(SRCROOT)\..\node_modules\react-native-google-signin\ios\RNGoogleSignin/**",
+					"$(SRCROOT)/../node_modules/react-native-appsee/ios",
 				);
 			};
 			name = Release;
@@ -1352,6 +1367,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 			};
 			name = Debug;
@@ -1376,6 +1392,7 @@
 				TVOS_DEPLOYMENT_TARGET = 10.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",

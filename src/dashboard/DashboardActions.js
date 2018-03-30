@@ -1,5 +1,6 @@
 import axios from 'axios'
 import firebase from 'react-native-firebase'
+import Appsee from 'react-native-appsee'
 
 const database = firebase.firestore()
 
@@ -12,7 +13,7 @@ export const cancelOrder = (fundToDelete) => {
 }
 
 const cancelOrderTransaction = async (transaction, fundToDelete, dispatch) => {
-  const user = firebase.auth().currentUser  
+  const user = firebase.auth().currentUser
   const fundToDeleteRef = database.doc(`users/${user.uid}/funds/${fundToDelete.id}`)
   const orderRef = database.doc(`orders/${fundToDelete.order}`)
   const orderDoc = await transaction.get(orderRef)
@@ -20,11 +21,12 @@ const cancelOrderTransaction = async (transaction, fundToDelete, dispatch) => {
   const fundToDecrementRef = database.doc(`users/${user.uid}/funds/${order.action==='buy'?order.quote.id:order.base.id}`)
   const fundToDecrementDoc = await transaction.get(fundToDecrementRef)
   let amountInOrder = fundToDecrementDoc.data().amountInOrder
-  amountInOrder -= order.action==='buy'? order.quote.placedAmount : order.base.placedAmount 
+  amountInOrder -= order.action==='buy'? order.quote.placedAmount : order.base.placedAmount
   const fundToDecrement = {...fundToDecrementDoc.data(), id:fundToDecrementDoc.id, amountInOrder}
   transaction.delete(fundToDeleteRef)
   transaction.delete(orderRef)
   transaction.update(fundToDecrementRef, { amountInOrder })
+  Appsee.addEvent('Order canceled')
 }
 
 export const subscribeFundsChange = () => {
@@ -45,7 +47,7 @@ const onFundsUpdate = (querySnapshot, dispatch) => {
   let funds = []
   querySnapshot.forEach(doc => {
     funds.push({
-      ...doc.data(), 
+      ...doc.data(),
       id: doc.id,
       availableAmount: calculateAvailableAmount(doc.data())
     })

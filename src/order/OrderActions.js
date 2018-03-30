@@ -1,6 +1,6 @@
 import { Toast } from 'native-base'
 import firebase from 'react-native-firebase'
-
+import Appsee from 'react-native-appsee'
 
 export const placeOrder = (order, callback) => {
   return async dispatch => {
@@ -34,6 +34,7 @@ export const placeOrder = (order, callback) => {
       const orderDoc = await ref.add(data)
       incrementAmountInOrder(data)
       createPendingFund(orderDoc.id, data)
+      Appsee.addEvent(order.action === 'buy' ? 'Buy' : 'Sell', { order : data })
       callback()
     } catch (err) {
       Toast.show({
@@ -97,8 +98,8 @@ export const initialOrderSetup = (funds, market, action) => {
     market.base.maximumValue = market.quote.maximumValue / market.price
   }else {
     let fund = funds.find(f => f.id === market.base.id)
-    market.base.maximumValue = fund.amount - (fund.amountInOrder||0) 
-    market.quote.maximumValue = market.base.maximumValue * market.price    
+    market.base.maximumValue = fund.amount - (fund.amountInOrder||0)
+    market.quote.maximumValue = market.base.maximumValue * market.price
   }
   market.quote.maximumValue = market.quote.maximumValue.toFixed(market.quote.precision)
   market.quote.maximumValue = parseFloat(market.quote.maximumValue)

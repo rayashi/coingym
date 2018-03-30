@@ -9,6 +9,8 @@ import LinearGradient from 'react-native-linear-gradient'
 import { connect } from 'react-redux'
 
 import AppIntroSlider from 'react-native-app-intro-slider'
+import Appsee from 'react-native-appsee'
+
 import { colors } from '../styles/base'
 import { signInAnonymously } from '../auth/AuthActions'
 
@@ -63,27 +65,30 @@ const slides = [
 
 class Intro extends React.Component {
   static navigationOptions = { header: null }
-  
+
   _onSkip = () => {
     this.props.navigation.navigate('Auth', {from:'Intro'})
   }
-  
+
   _onDone = () => {
-    if(!this.props.currentUser.uid){
+    Appsee.addEvent('Intro')
+
+    if (!this.props.currentUser.uid) {
       this.props.signInAnonymously()
     }
+
     this.props.navigation.navigate('Deposit')
   }
-  
+
   _renderItem = props => (
-    <LinearGradient colors={colors.gradient} 
+    <LinearGradient colors={colors.gradient}
       style={[styles.mainContent, {
         paddingTop: props.topSpacer,
         paddingBottom: props.bottomSpacer,
         width: props.width,
         height: props.height,
       }]}>
-      
+
       <StatusBar backgroundColor={colors.primary}/>
       <Image source={props.image} style={styles.image}/>
       <Text style={styles.title}>{props.title}</Text>
@@ -92,7 +97,7 @@ class Intro extends React.Component {
   )
 
   render() {
-    return (  
+    return (
       <AppIntroSlider
         skipLabel='Already have an account'
         doneLabel="Let's start"

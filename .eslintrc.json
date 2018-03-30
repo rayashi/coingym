@@ -19,13 +19,15 @@
         "react/display-name": 1,
         "react/prop-types": 0,
         "no-unused-vars": "warn",
-        "no-console": 1,
         "no-unexpected-multiline": "warn",
+        "no-console": ["off"],
         "quotes": ["error", "single"],
         "eqeqeq": ["error", "smart"]
     },
     "globals": {
         "require": true,
-        "alert": true
+        "alert": true,
+        "console": true,
+        "__DEV__": true
     }
 }

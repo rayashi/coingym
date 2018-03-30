@@ -13,34 +13,47 @@ import CustomLoading from '../shared/CustomLoading'
 import { setMarkets, getMarkets } from './CoinListActions'
 import MarketItem from './MarketItem'
 import UnavailableModal from './UnavailableModal'
+import Appsee from 'react-native-appsee'
 
 class CoinList extends React.Component {
   static navigationOptions = { header: null }
   state = {
-    title: 'Buy / Pay With', 
+    title: 'Buy / Pay With',
     modalVisible: false,
-    selectedMarket: null 
+    selectedMarket: null
   }
 
   componentWillMount () {
     const { fundToSell } = this.props.navigation.state.params
-    if(fundToSell) {
+
+    if (fundToSell) {
       this.setState({title:'Sell / Receive In'})
-    } 
+      Appsee.addEvent('Sell init', { fund : Object.assign({}, fundToSell) })
+    } else {
+      Appsee.addEvent('Buy init')
+    }
+
     this.props.setMarkets([])
     this.props.getMarkets(this.props.funds, fundToSell)
   }
-  
-  _onSelectPair(market){
-    if(market.loadingPrice) return null
-    if(!market.available){
+
+  _onSelectPair(market) {
+    if (market.loadingPrice) return null
+
+    if (!market.available) {
+      Appsee.addEvent('Unavailable pair selected', { market : JSON.parse(JSON.stringify(market)) })
+
       this.setState({
         modalVisible: true,
         selectedMarket: market
       })
+
       return null
     }
-    this.props.navigation.navigate('Order', {market})
+
+    Appsee.addEvent('Pair selected', { market : JSON.parse(JSON.stringify(market)) })
+
+    this.props.navigation.navigate('Order', { market })
   }
 
   _onModalClose(){
@@ -50,8 +63,8 @@ class CoinList extends React.Component {
     })
   }
 
-  _keyExtractor = (item, index) => item.id
-  
+  _keyExtractor = item => item.id
+
   _renderItem = ({item}) => (
     <MarketItem item={item} onPress={this._onSelectPair.bind(this, item)}/>
   )
@@ -69,7 +82,7 @@ class CoinList extends React.Component {
           renderItem={this._renderItem}/>
         <CustomLoading show={this.props.loading}/>
         <UnavailableModal
-          onclose={this._onModalClose.bind(this)} 
+          onclose={this._onModalClose.bind(this)}
           visible={this.state.modalVisible}
           market={this.state.selectedMarket}/>
       </View>
@@ -86,7 +99,7 @@ const mapStateToProps = state => (
 )
 
 export default connect(mapStateToProps, {
-  setMarkets, 
+  setMarkets,
   getMarkets
 })(CoinList)
 

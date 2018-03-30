@@ -7,10 +7,10 @@ import {
   TouchableOpacity,
   Dimensions
 } from 'react-native'
-import { 
+import {
   Content,
-  Text, 
-  Button, 
+  Text,
+  Button,
   Icon,
   Container
 } from 'native-base'
@@ -21,7 +21,7 @@ import { colors } from '../styles/base'
 import { formsStyles } from '../styles/forms'
 import {
   loginWithFacebook,
-  loginWithGoogle 
+  loginWithGoogle
 } from './AuthActions'
 import CustomLoanding from '../shared/CustomLoading'
 
@@ -29,20 +29,20 @@ class Auth extends Component {
   static navigationOptions = { header: null }
 
   _onLoginWithFacebook(){
-    if(this.props.loading) return null
+    if (this.props.loading) return null
     this.props.loginWithFacebook(this.props.navigation, 'Dashboard')
   }
-  
-  _onLoginWithGoogle(){
-    if(this.props.loading) return null
+
+  _onLoginWithGoogle() {
+    if (this.props.loading) return null
     this.props.loginWithGoogle(this.props.navigation, 'Dashboard')
   }
 
   _onCancel() {
     const { from } = this.props.navigation.state.params
-    if(from === 'Intro'){
+    if (from === 'Intro') {
       this.props.navigation.navigate('Intro')
-    }else {
+    } else {
       this.props.navigation.navigate('Dashboard')
     }
   }
@@ -53,8 +53,8 @@ class Auth extends Component {
     return (
       <Container>
         <StatusBar hidden />
-        
-        <LinearGradient colors={colors.gradient} 
+
+        <LinearGradient colors={colors.gradient}
           style={[styles.mainContent, {
             width: Dimensions.get('window').width,
             height: Dimensions.get('window').height,
@@ -62,11 +62,11 @@ class Auth extends Component {
 
           <Content contentContainerStyle={{flex:1, width: Dimensions.get('window').width}}>
             <View style={styles.container}>
-              <TouchableOpacity style={styles.close} 
+              <TouchableOpacity style={styles.close}
                 onPress={this._onCancel.bind(this)}>
                 <Icon name='ios-close-circle-outline' size={32} style={{color:'rgba(255,255,255,0.4)'}}/>
               </TouchableOpacity>
-              
+
               {from === 'Intro' ?
                 <View style={styles.icon}>
                   <Image style={styles.logo} source={require('../../images/pigbit.png')}/>
@@ -83,12 +83,12 @@ class Auth extends Component {
 
               <View style={styles.form}>
                 <View style={styles.buttons} >
-                  <Button block bordered light style={formsStyles.button} 
+                  <Button block bordered light style={formsStyles.button}
                     onPress={this._onLoginWithFacebook.bind(this)}>
                     <Icon style={{left:10}} name='logo-facebook' size={32}/>
                     <Text>Sign in using Facebook</Text>
                   </Button>
-                  <Button block bordered light style={formsStyles.button} 
+                  <Button block bordered light style={formsStyles.button}
                     onPress={this._onLoginWithGoogle.bind(this)}>
                     <Icon style={{left:4}} name='logo-google' size={32}/>
                     <Text>Sign in using Google</Text>
@@ -99,7 +99,7 @@ class Auth extends Component {
           </Content>
         </LinearGradient>
         <CustomLoanding show={this.props.loading}/>
-      </Container>      
+      </Container>
     )
   }
 }
@@ -110,7 +110,7 @@ const mapStateToProps = state => (
   }
 )
 
-export default connect(mapStateToProps, { 
+export default connect(mapStateToProps, {
   loginWithFacebook,
   loginWithGoogle
 }
@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     flexDirection: 'column',
     justifyContent: 'center',
-    marginBottom: 10    
+    marginBottom: 10
   },
   action: {
     marginVertical: 12,

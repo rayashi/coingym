@@ -3,6 +3,7 @@ package com.coingym;
 import android.support.multidex.MultiDexApplication;
 
 import com.facebook.react.ReactApplication;
+import com.appsee.reactnative.AppseeReactPackage;
 import co.apptailor.googlesignin.RNGoogleSigninPackage;
 import com.facebook.reactnative.androidsdk.FBSDKPackage;
 import com.facebook.CallbackManager;
@@ -38,6 +39,7 @@ public class MainApplication extends MultiDexApplication implements ReactApplica
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new AppseeReactPackage(),
             new RNGoogleSigninPackage(),
             new FBSDKPackage(mCallbackManager),
             new RNFirebasePackage(),

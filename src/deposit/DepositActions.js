@@ -1,9 +1,10 @@
 import firebase from 'react-native-firebase'
+import Appsee from 'react-native-appsee'
 
-export const deposit = (value) => {
+export const deposit = async (value) => {
   var user = firebase.auth().currentUser
 
-  firebase.firestore()
+  await firebase.firestore()
     .collection('users')
     .doc(`${user.uid}`)
     .collection('funds')
@@ -17,4 +18,6 @@ export const deposit = (value) => {
       precision : 2,
       pending: false
     })
+
+    Appsee.addEvent('Deposit', { value })
 }
