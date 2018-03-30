@@ -4,10 +4,8 @@ export const formsStyles = StyleSheet.create({
   input: {
     paddingVertical: 8,
     paddingHorizontal: 11,
-    borderColor: 'gray', 
-    borderWidth: 0.2,
     borderRadius: 5,
-    backgroundColor: 'rgba(0, 0, 0, 0.03)',
+    backgroundColor: 'rgba(0, 0, 0, 0.05)',
     fontSize: 14,
     textAlignVertical: 'center',
     marginVertical: 5

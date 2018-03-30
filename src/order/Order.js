@@ -131,9 +131,11 @@ class Order extends React.Component {
     return (
       <View style={{flex:1}}>
         <StatusBar backgroundColor={colors.primary}/>
-        <CustomHeader title='Order'/>
-        <Container style={{padding:8}}>
-          <Content>
+        <CustomHeader title='Order'
+          leftIcon='ios-arrow-back'
+          onLefButtonPress={()=>this.props.navigation.goBack()}/>
+        <Container >
+          <Content style={{padding:8}}>
             {order.action === 'buy' ? 
               <View>
                 <OrderCard coin={order.quote} type='spend'

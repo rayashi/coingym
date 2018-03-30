@@ -42,7 +42,7 @@ class Loading extends Component {
   render() {
     return (
       <Container>
-        <StatusBar hidden />
+        <StatusBar backgroundColor={colors.primary}/>
         <LinearGradient colors={colors.gradient}
           style={[styles.mainContent, {
             width: Dimensions.get('window').width,

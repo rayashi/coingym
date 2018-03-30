@@ -4,6 +4,7 @@ import {
   View,
   StatusBar,
   FlatList,
+  BackHandler
 } from 'react-native'
 import { connect } from 'react-redux'
 
@@ -20,9 +21,10 @@ class Dashboard extends React.Component {
   static navigationOptions = { header: null }
 
   componentDidMount() {
+    BackHandler.addEventListener('hardwareBackPress',() => true)
     this.props.subscribeFundsChange()
   }
-
+ 
   componentWillUnmount() {
     if(this.props.unsubscribeFundsChange){
       this.props.unsubscribeFundsChange()
@@ -58,7 +60,7 @@ class Dashboard extends React.Component {
   render() {
     return (
       <View style={styles.main}>
-        <StatusBar backgroundColor={colors.primary}/>
+        <StatusBar hidden={false} backgroundColor={colors.primary}/>
         <CustomHeader title='Funds'/>
 
         <FlatList

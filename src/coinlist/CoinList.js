@@ -60,7 +60,9 @@ class CoinList extends React.Component {
     return (
       <View style={styles.main}>
         <StatusBar hidden={false} backgroundColor={colors.primary}/>
-        <CustomHeader title={this.state.title}/>
+        <CustomHeader title={this.state.title}
+          leftIcon='ios-arrow-back'
+          onLefButtonPress={()=>this.props.navigation.goBack()}/>
         <FlatList
           data={this.props.markets}
           keyExtractor={this._keyExtractor}

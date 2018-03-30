@@ -52,10 +52,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'column',
     padding: 16,
-    marginHorizontal: 40,
-    marginVertical: 200,
+    marginHorizontal: 14,
+    marginTop: 200,
     backgroundColor: 'white',
-    borderRadius: 10
+    borderRadius: 10,
+    borderColor: 'rgba(0,0,0,0.2)',
+    borderWidth: 6
   },
   msg: {
     textAlign: 'center',

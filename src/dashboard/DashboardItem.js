@@ -30,7 +30,7 @@ export default class DashboardItem extends Component {
             {item.name}
           </Text>
           <Text style={[styles.amount,item.pending?styles.pending:null]} >
-            {(item.amount - (item.amountInOrder||0)).toFixed(item.precision)}
+            {item.availableAmount}
           </Text>
         </Body>
         {item.percentChange24h || item.priceUsd?
