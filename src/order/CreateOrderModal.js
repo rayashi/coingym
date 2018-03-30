@@ -21,15 +21,13 @@ const CreateOrderModal = (props) => {
       animationType='slide'
       transparent={true}
       visible={props.visible}
-      onRequestClose={() => {
-        alert('Modal has been closed.');
-      }}>
+      onRequestClose={() => null}>
       <View style={styles.container}>
         <View style={styles.content}>
           <Icon name='ios-checkmark-circle' style={styles.icon}/>
           <Text style={styles.h1}>Your order has been successfully created</Text>
           <Text style={styles.h2}>Now you can follow its status on the funds screen</Text>
-          <Button light block rounded bordered style={styles.button} onPress={props.onClose}>
+          <Button light block bordered style={styles.button} onPress={props.onClose}>
             <Text>Go back to your Funds</Text>
           </Button>
         </View>
