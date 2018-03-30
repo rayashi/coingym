@@ -34,6 +34,7 @@ class Deposit extends React.Component {
   }
 
   _makeDeposit = () => {
+    if(!this.props.config) return null
     if (!this.state.value) {
       Toast.show({
         text: 'Please type some value to deposit',
@@ -44,7 +45,7 @@ class Deposit extends React.Component {
       })
     } else if (this.state.value > this.props.config.depositMaximumValue) {
       Toast.show({
-        text: `Sorry the maximum value for deposit is ${this.props.depositMaximumValue}`,
+        text: `Sorry the maximum value for deposit is ${this.props.config.depositMaximumValue}`,
         type: 'danger',
         position: 'bottom',
         buttonText: 'OK',
@@ -82,7 +83,10 @@ class Deposit extends React.Component {
           onSubmitEditing={this._makeDeposit}
           maxLength={8}/>
 
-        <Button block rounded bordered light style={styles.button} onPress={this._makeDeposit}>
+        <Button block rounded bordered light 
+          style={styles.button} 
+          onPress={this._makeDeposit}
+          disabled={!this.props.config}>
           <Text>Make my first deposit</Text>
         </Button>
       </LinearGradient>
@@ -141,6 +145,5 @@ const styles = StyleSheet.create({
     color: 'white',
     textAlign: 'center',
     marginTop: 40
-  },
-
+  }
 })
