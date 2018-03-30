@@ -34,7 +34,7 @@ class Deposit extends React.Component {
   }
 
   _makeDeposit = () => {
-    if (!this.state.value){
+    if (!this.state.value) {
       Toast.show({
         text: 'Please type some value to deposit',
         type: 'danger',
@@ -42,7 +42,7 @@ class Deposit extends React.Component {
         buttonText: 'OK',
         duration: 2500
       })
-    }else if (this.state.value > this.props.config.depositMaximumValue) {
+    } else if (this.state.value > this.props.config.depositMaximumValue) {
       Toast.show({
         text: `Sorry the maximum value for deposit is ${this.props.depositMaximumValue}`,
         type: 'danger',
