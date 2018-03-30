@@ -34,9 +34,17 @@ class Deposit extends React.Component {
   }
 
   _makeDeposit = () => {
-    if (!this.state.value) {
+    if (!this.state.value){
       Toast.show({
         text: 'Please type some value to deposit',
+        type: 'danger',
+        position: 'bottom',
+        buttonText: 'OK',
+        duration: 2500
+      })
+    }else if (this.state.value > this.props.config.depositMaximumValue) {
+      Toast.show({
+        text: `Sorry the maximum value for deposit is ${this.props.depositMaximumValue}`,
         type: 'danger',
         position: 'bottom',
         buttonText: 'OK',
@@ -65,14 +73,14 @@ class Deposit extends React.Component {
         :null}
         <Text style={styles.label}>Initial deposit value in dollar</Text>
         <TextInput
-          onChangeText={(value) => this.setState({ value })}
+          onChangeText={(val) => this.setState({ value: Number(val) })}
           width={'100%'}
           style={formsStyles.inputBackgrounded}
           keyboardType='numeric'
           placeholder={'USD 30,000.00'}
           underlineColorAndroid='rgba(0, 0, 0, 0)'
           onSubmitEditing={this._makeDeposit}
-          />
+          maxLength={8}/>
 
         <Button block rounded bordered light style={styles.button} onPress={this._makeDeposit}>
           <Text>Make my first deposit</Text>
@@ -84,6 +92,7 @@ class Deposit extends React.Component {
 
 const mapStateToProps = state => ({
   value: state.DepositReducer.value,
+  config: state.LoadingReducer.config
 })
 
 export default connect(mapStateToProps, {})(Deposit)
@@ -91,19 +100,19 @@ export default connect(mapStateToProps, {})(Deposit)
 const styles = StyleSheet.create({
   image: {
     width: 180,
-    height: 180,
+    height: 180
   },
   text: {
     color: 'rgba(255, 255, 255, 0.8)',
     backgroundColor: 'transparent',
     textAlign: 'center',
     paddingHorizontal: 20,
-    fontSize: 18,
+    fontSize: 18
   },
   boldText: {
     color: 'white',
     fontWeight: 'bold',
-    fontSize: 20,
+    fontSize: 20
   },
   title: {
     paddingHorizontal: 18,
@@ -111,17 +120,17 @@ const styles = StyleSheet.create({
     color: 'white',
     backgroundColor: 'transparent',
     textAlign: 'center',
-    marginVertical: 16,
+    marginVertical: 16
   },
   mainContent: {
     padding:10,
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   hiddenContent: {
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   button: {
     marginTop: 10
