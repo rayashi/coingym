@@ -19,9 +19,8 @@ export const getRemoteConfig = () => {
     firebase.config().setDefaults({
       depositMaximumValue: 1000
     })
+    await firebase.config().fetch()
     await firebase.config().activateFetched()
-    const activated = await firebase.config().fetch()
-    if(!activated) return null
     const snapshot = await firebase.config().getValue('depositMaximumValue')
     const depositMaximumValue = snapshot.val()
     dispatch({type: 'set_config', payload: {depositMaximumValue}})  
