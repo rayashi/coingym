@@ -83,8 +83,8 @@ class Deposit extends React.Component {
           onSubmitEditing={this._makeDeposit}
           maxLength={8}/>
 
-        <Button block rounded bordered light 
-          style={styles.button} 
+        <Button block rounded bordered light
+          style={styles.button}
           onPress={this._makeDeposit}
           disabled={!this.props.config}>
           <Text>Make my first deposit</Text>
@@ -137,7 +137,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   button: {
-    marginTop: 10
+    marginTop: 10,
+    maxHeight: 45
   },
   label: {
     paddingHorizontal: 18,
