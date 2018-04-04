@@ -65,14 +65,16 @@ const _setupPushNotifications = async (credential) => {
     userDoc.ref.set({ ...userDoc.data(), pushToken: token })
 
     messaging.onMessage((message) => {
-      Appsee.addEvent('Order executed')
-      Alert.alert('Great News', message.fcm.body, [{
-        text: 'OK',
-        onPress: () => NavigationService.navigate('Dashboard')
-      }],
-      {
-        cancelable: false
-      })
+      if(message && message.fcm && message.fcm.body){
+        Appsee.addEvent('Order executed')
+        Alert.alert('Great News', message.fcm.body, [{
+          text: 'OK',
+          onPress: () => NavigationService.navigate('Dashboard')
+        }],
+        {
+          cancelable: false
+        })
+      }
     })
 
     messaging.getInitialNotification(() => {
