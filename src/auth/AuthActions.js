@@ -47,7 +47,7 @@ export const login = (username, password, nav, goTo) => {
   }
 }
 
-export const loginWithFacebook = (nav, goTo) => {
+export const loginWithFacebook = nav => {
   return async dispatch => {
     await dispatch({type: 'set_redirect', payload: false})
     try {
@@ -78,7 +78,7 @@ export const loginWithFacebook = (nav, goTo) => {
       }
 
       saveCredential(dispatch, credential)
-      nav.navigate(goTo)
+      guideUser(nav, credential)
     } catch(error) {
       dispatch({type: 'loading_auth', payload: false})
 
@@ -94,7 +94,7 @@ export const loginWithFacebook = (nav, goTo) => {
   }
 }
 
-export const loginWithGoogle = (nav, goTo) => {
+export const loginWithGoogle = nav => {
   return async dispatch => {
     await dispatch({type: 'set_redirect', payload: false})
 
@@ -116,8 +116,8 @@ export const loginWithGoogle = (nav, goTo) => {
       }
 
       saveCredential(dispatch, credential)
-
-      if (nav) nav.navigate(goTo)
+      guideUser(nav, credential)
+      
     } catch (error) {
       dispatch({type: 'loading_auth', payload: false})
 
@@ -191,4 +191,16 @@ const deleteOldUserData = async (dispatch) => {
   await database.doc(`users/${auth.currentUser.uid}`).delete()
   await auth.currentUser.delete()
   dispatch({type: 'loading_auth', payload: true})
+}
+
+const guideUser = async (nav, credential) => {
+  if(!nav) return null
+  try {
+    let user = credential.user || credential._user
+    let funds = await database.collection(`users/${user.uid}/funds`).get()
+    user.hasFunds = Boolean(funds.size)
+    user.hasFunds ? nav.navigate('Dashboard') : nav.navigate('Deposit')
+  } catch (error) {
+    nav.navigate('Deposit')
+  }
 }

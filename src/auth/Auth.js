@@ -30,12 +30,12 @@ class Auth extends Component {
 
   _onLoginWithFacebook(){
     if (this.props.loading) return null
-    this.props.loginWithFacebook(this.props.navigation, 'Dashboard')
+    this.props.loginWithFacebook(this.props.navigation)
   }
 
   _onLoginWithGoogle() {
     if (this.props.loading) return null
-    this.props.loginWithGoogle(this.props.navigation, 'Dashboard')
+    this.props.loginWithGoogle(this.props.navigation)
   }
 
   _onCancel() {
@@ -62,11 +62,12 @@ class Auth extends Component {
 
           <Content contentContainerStyle={{flex:1, width: Dimensions.get('window').width}}>
             <View style={styles.container}>
-              <TouchableOpacity style={styles.close}
-                onPress={this._onCancel.bind(this)}>
-                <Icon name='ios-close-circle-outline' size={32} style={{color:'rgba(255,255,255,0.4)'}}/>
-              </TouchableOpacity>
-
+              {from === 'Intro' ?
+                <TouchableOpacity style={styles.close}
+                  onPress={this._onCancel.bind(this)}>
+                  <Icon name='ios-close-circle-outline' size={32} style={{color:'rgba(255,255,255,0.4)'}}/>
+                </TouchableOpacity>
+              :null}
               {from === 'Intro' ?
                 <View style={styles.icon}>
                   <Image style={styles.logo} source={require('../../images/pigbit.png')}/>

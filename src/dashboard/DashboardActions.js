@@ -45,11 +45,10 @@ const onFundsUpdate = (querySnapshot, dispatch) => {
   dispatch({ type: 'set_funds', payload: [] })
   let funds = []
   querySnapshot.forEach(doc => {
-    funds.push({
-      ...doc.data(),
-      id: doc.id,
-      availableAmount: calculateAvailableAmount(doc.data())
-    })
+    let availableAmount = calculateAvailableAmount(doc.data()) 
+    if( availableAmount > 0 ){
+      funds.push({ ...doc.data(), id: doc.id, availableAmount })
+    }
   })
   dispatch({ type: 'set_funds', payload: funds })
   dispatch({ type: 'set_loading_funds', payload: false })
