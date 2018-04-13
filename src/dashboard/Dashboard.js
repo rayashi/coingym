@@ -16,21 +16,26 @@ import { setOrderAction } from '../order/OrderActions'
 import DashboardItem from './DashboardItem'
 import DashboardMessage from './DashboardMessage'
 import CustomLoanding from '../shared/CustomLoading'
+import PendingOrderModal from './PendingOrderModal'
 
 class Dashboard extends React.Component {
   static navigationOptions = { header: null }
+  state = {
+    modalVisible: false,
+    touchedPendingOrder: null
+  }
 
   componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress',() => true)
     this.props.subscribeFundsChange()
   }
- 
+
   componentWillUnmount() {
     if(this.props.unsubscribeFundsChange){
       this.props.unsubscribeFundsChange()
     }
   }
-  
+
   _onBuy() {
     this.props.setOrderAction('buy')
     this.props.navigation.navigate('CoinList', {fundToSell:null})
@@ -42,18 +47,26 @@ class Dashboard extends React.Component {
     this.props.cancelOrder(item)
   }
 
-  _onSell = item => e => {
+  _onTouch = item => e => {
     e.preventDefault()
-    if(this.props.deletingOrder || item.pending || item.fiat) return null
-    this.props.setOrderAction('sell')
-    this.props.navigation.navigate('CoinList', {fundToSell:item})
+    if (this.props.deletingOrder || item.fiat) return null
+
+    if (item.pending) {
+      this.setState({
+        modalVisible: true,
+        touchedPendingOrder: item
+      })
+    } else {
+      this.props.setOrderAction('sell')
+      this.props.navigation.navigate('CoinList', {fundToSell:item})
+    }
   }
 
   _keyExtractor = item => item.id
 
   _renderItem = ({item}) => (
     <DashboardItem item={item}
-      onSell={this._onSell} 
+      onTouch={this._onTouch}
       onOrderCancel={this._onOrderCancel}/>
   )
 
@@ -68,11 +81,27 @@ class Dashboard extends React.Component {
           keyExtractor={this._keyExtractor}
           renderItem={this._renderItem}/>
 
-        <DashboardMessage funds={this.props.funds} 
+        <DashboardMessage funds={this.props.funds}
           loading={this.props.loading}/>
 
-        <FabButton icon='md-add' 
+        <FabButton icon='md-add'
           onPress={this._onBuy.bind(this)}/>
+
+        <PendingOrderModal
+          visible={this.state.modalVisible}
+          oncancel={() => {
+            this.props.cancelOrder(this.state.touchedPendingOrder)
+            this.setState({
+              modalVisible: false,
+              touchedPendingOrder: null
+            })
+          }}
+          onwait={() => {
+            this.setState({
+              modalVisible: false,
+              touchedPendingOrder: null
+            })
+          }}/>
 
         <CustomLoanding show={this.props.deletingOrder}/>
       </View>

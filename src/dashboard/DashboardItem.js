@@ -20,7 +20,7 @@ export default class DashboardItem extends Component {
   render() {
     const { item } = this.props
     return (
-      <ListItem avatar onPress={this.props.onSell(item)}>
+      <ListItem avatar onPress={this.props.onTouch(item)}>
         <Left>
           <Image source={{ uri: item.image }}
             style={[styles.image, item.pending?styles.pending:null]}/>
@@ -58,7 +58,7 @@ export default class DashboardItem extends Component {
           <Right>
             <View style={styles.righTop}>
               <Icon name='ios-time-outline' style={styles.pendingIcon}/>
-              <Text style={styles.pendingText}>&nbsp; 
+              <Text style={styles.pendingText}>&nbsp;
                 {item.action?
                   <Text style={styles.pendingText}>{(item.action+'ing')} </Text>
                 :null}
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   image: {
-    width: 32, 
+    width: 32,
     height: 32
   },
   amount: {
@@ -121,4 +121,3 @@ const styles = StyleSheet.create({
     flexDirection:'row'
   }
 })
-
