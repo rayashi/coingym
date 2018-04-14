@@ -7,7 +7,7 @@ export const setMarkets = (value) => {
   return {type: 'set_markets', payload: value}
 }
 
-export const getMarkets = (funds, fundToSell) => {
+export const getMarkets = (funds, fundToSell, payWith) => {
   return async dispatch => {
     dispatch({ type: 'loading_markets', payload: true })
     let markets = []
@@ -15,22 +15,25 @@ export const getMarkets = (funds, fundToSell) => {
     if(fundToSell){
       ref = ref.where('base.id', '==', fundToSell.id)
     }
+    if (payWith) {
+      ref = ref.where('quote.id', '==', payWith.id)
+    }
     let snapshot = await ref.get()
     snapshot.forEach(async doc => {
       markets.push({ ...doc.data(), id: doc.id, loadingPrice: true})
     })
-    loadMarketPrices(markets, funds,  dispatch)
+    loadMarketPrices(markets, funds, fundToSell, dispatch)
   }
 }
 
-const loadMarketPrices = async (markets, funds, dispatch) => {
+const loadMarketPrices = async (markets, funds, fundToSell, dispatch) => {
   const prices = listToObject(await getMarketPrices())
   if(!prices) return null
   markets.map( async market => { 
     market.base.ticker = getTicker(market.base.id, prices)
     market.quote.ticker = getTicker(market.quote.id, prices)
     market.price = calculateMarketPrice(market)
-    market.available = getMarketAvailability(market, funds)
+    market.available = getMarketAvailability(market, funds, fundToSell)
     market.loadingPrice = false
   })
   markets.filter( market => !market.price  )
@@ -44,7 +47,8 @@ const calculateMarketPrice = (market) => {
   return Number(price.toFixed(market.quote.precision))
 }
 
-const getMarketAvailability = (market, funds) =>{
+const getMarketAvailability = (market, funds, fundToSell) =>{
+  if(fundToSell) return true
   let fund = funds.find(f => f.id === market.quote.id)
   if(fund && !fund.pending && (fund.amount - (fund.amountInOrder||0)) > 0) 
     return true

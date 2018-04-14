@@ -49,9 +49,12 @@ class Dashboard extends React.Component {
 
   _onTouch = item => e => {
     e.preventDefault()
-    if (this.props.deletingOrder || item.fiat) return null
+    if (this.props.deletingOrder) return null
 
-    if (item.pending) {
+    if (item.id === 'usd' ) {
+      this.props.setOrderAction('buy')
+      this.props.navigation.navigate('CoinList', { payWith: item })  
+    }else if (item.pending) {
       this.setState({
         modalVisible: true,
         touchedPendingOrder: item

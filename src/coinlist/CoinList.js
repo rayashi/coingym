@@ -25,6 +25,7 @@ class CoinList extends React.Component {
 
   componentWillMount () {
     const { fundToSell } = this.props.navigation.state.params
+    const { payWith } = this.props.navigation.state.params
 
     if (fundToSell) {
       this.setState({title:'Sell / Receive In'})
@@ -34,7 +35,7 @@ class CoinList extends React.Component {
     }
 
     this.props.setMarkets([])
-    this.props.getMarkets(this.props.funds, fundToSell)
+    this.props.getMarkets(this.props.funds, fundToSell, payWith)
   }
 
   _onSelectPair(market) {
